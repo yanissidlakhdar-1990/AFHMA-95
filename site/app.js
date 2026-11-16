@@ -1,21 +1,39 @@
 /* Haltéro 95 — site statique. Les données viennent de data/*.json (mis à jour chaque nuit). */
 (() => {
   const $app = document.getElementById("app");
+  const $tip = document.getElementById("tip");
   const LIFTS = [["snatch", "Arraché"], ["cj", "Épaulé-jeté"], ["total", "Total"]];
+  const SHORT = { snatch: "ARR", cj: "É-J", total: "TOT" };
+  const LC = { snatch: "var(--snatch)", cj: "var(--cj)", total: "var(--total)" };
   const AGE_ORDER = ["U13", "U15", "U17", "U20", "Senior"];
+  const CLUB_COLORS = ["#e4002b", "#2f6bff", "#f08c00", "#8b5cf6"];
+  const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let D = null; // données
   const state = { club: null, q: "", recPeriod: null, recSex: "F", recAge: "Senior", showAll: false };
 
   // ---------- utils
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const frDate = (iso) => (iso ? `${iso.slice(8, 10)}/${iso.slice(5, 7)}/${iso.slice(0, 4)}` : "—");
-  const monthYear = (iso) => (iso ? `${iso.slice(5, 7)}/${iso.slice(0, 4)}` : "");
+  const MONTHS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
+  const longDate = (iso) => (iso ? `${+iso.slice(8, 10)} ${MONTHS[+iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}` : "—");
+  const monthYear = (iso) => (iso ? `${MONTHS[+iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}` : "");
   const kg = (v) => (v || v === 0 ? String(v).replace(".", ",") : "—");
   const sexLabel = (s) => (s === "F" ? "Femme" : "Homme");
   const sexPlural = (s) => (s === "F" ? "Femmes" : "Hommes");
   const norm = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
   const athleteLink = (lic, name) => `<a href="#/a/${encodeURIComponent(lic)}">${esc(name)}</a>`;
   const ageSort = (a) => (AGE_ORDER.includes(a) ? AGE_ORDER.indexOf(a) * 100 : 1000 + parseInt(a.slice(1), 10));
+  const clubColor = (c) => CLUB_COLORS[Math.max(0, D.meta.clubs.indexOf(c)) % CLUB_COLORS.length];
+  const clubShort = (c) => (c || "").replace("AFHMA FRANCONVILLE", "AFHMA Franconville").replace("HFC CP95 CERGY", "HFC CP95 Cergy").replace("WIM LIFT", "WIM Lift");
+  // « RICHEVAUX Jade » → { last: "RICHEVAUX", first: "Jade" }
+  const splitName = (n) => {
+    const w = String(n).split(/\s+/);
+    const i = w.findIndex((x) => x !== x.toUpperCase() || !/[A-ZÀ-Ý]/.test(x));
+    return i <= 0 ? { last: n, first: "" } : { last: w.slice(0, i).join(" "), first: w.slice(i).join(" ") };
+  };
+  const initials = (n) => { const { last, first } = splitName(n); return ((first[0] || "") + (last[0] || "")).toUpperCase(); };
+  const bestTotal = (a) => a.pb.total ? a.pb.total.value : 0;
+  const rv = (i) => `rv" style="--i:${i}`; // classe d'apparition échelonnée
 
   async function load() {
     const get = (f) => fetch(`data/${f}?v=${Date.now().toString().slice(0, -5)}`).then((r) => r.json());
@@ -23,15 +41,35 @@
     D = { meta, athletes, results, records, byLic: Object.fromEntries(athletes.map((a) => [a.licence, a])) };
     state.recPeriod = meta.latest_period;
     document.getElementById("updated").textContent =
-      `Dernier résultat : ${frDate(meta.latest_result)} · mis à jour le ${frDate(meta.updated_at.slice(0, 10))}`;
+      `Dernier résultat : ${longDate(meta.latest_result)} · mis à jour le ${longDate(meta.updated_at.slice(0, 10))}`;
   }
 
   function setNav(key) {
     document.querySelectorAll("[data-nav]").forEach((a) => a.classList.toggle("active", a.dataset.nav === key));
   }
 
+  // ---------- animations après rendu
+  function animate() {
+    const run = () => {
+      $app.querySelectorAll("[data-count]").forEach((el) => {
+        const end = parseFloat(el.dataset.count), dec = (el.dataset.count.split(".")[1] || "").length;
+        if (REDUCED) { el.textContent = kg(end.toFixed(dec)); return; }
+        const t0 = performance.now(), dur = 1100;
+        const step = (t) => {
+          const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 4);
+          el.textContent = kg((end * e).toFixed(dec));
+          if (p < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      });
+      $app.querySelectorAll("[data-w]").forEach((el) => { el.style.width = el.dataset.w; });
+      $app.querySelectorAll("[data-off]").forEach((el) => { el.style.strokeDashoffset = el.dataset.off; });
+    };
+    requestAnimationFrame(() => requestAnimationFrame(run));
+  }
+
   // ---------- accueil
-  function viewHome() {
+  function viewHome(soft) {
     setNav("home");
     const clubs = D.meta.clubs;
     const q = norm(state.q);
@@ -39,25 +77,55 @@
       .filter((a) => !state.club || a.clubs.includes(state.club))
       .filter((a) => !q || norm(a.name).includes(q) || a.licence.includes(q))
       .sort((a, b) => (b.last_date || "").localeCompare(a.last_date || "") || a.name.localeCompare(b.name));
+    const listHtml = list.map((a, i) => `
+      <a class="aitem ${i < 24 && !soft ? rv(Math.min(i, 12) + 6) : ""}" href="#/a/${encodeURIComponent(a.licence)}">
+        <span class="avatar" style="--c:${clubColor(a.club)}">${esc(initials(a.name))}</span>
+        <span class="ainfo"><b>${esc(a.name)}</b><span><span class="tag">${esc(a.age_cat)}</span> ${esc(clubShort(a.club))}</span></span>
+        ${bestTotal(a) ? `<span class="abest"><b>${bestTotal(a)}</b><span>kg total</span></span>` : ""}
+      </a>`).join("") || `<p class="empty">Aucun athlète trouvé.</p>`;
+
+    if (soft) { // frappe dans la recherche : on ne redessine que la liste
+      $app.querySelector(".alist").innerHTML = listHtml;
+      $app.querySelector(".count").textContent = `${list.length} athlète${list.length > 1 ? "s" : ""} · les plus récents en premier`;
+      return;
+    }
+    const hist = D.records.history;
+    const season = D.meta.latest_season;
+    const seasonStart = `${season.slice(0, 4)}-09-01`;
+    const recSeason = hist.filter((h) => h.date >= seasonStart).length;
+    const comps = new Set(D.results.map((r) => r.competition + r.date)).size;
+    const last = hist.slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 18);
+    const tk = last.map((h) => `<a class="tk" href="#/a/${encodeURIComponent(h.licence)}"><span class="bolt">⚡</span><b>${kg(h.value)}</b>
+      <span class="who">${esc(h.athlete)}</span><span class="what">${esc(Object.fromEntries(LIFTS)[h.lift])} · ${esc(h.age_cat)} ${h.sex} ${esc(h.weight_class)}</span></a>`).join("");
+
     $app.innerHTML = `
-      <h1>Trouve ta fiche</h1>
-      <div class="sub">Tes records, ta progression, tes séries et les records du 95 de ta catégorie.</div>
-      <div class="chips">
+      <section class="hero">
+        <div class="eyebrow ${rv(0)}">Saison ${esc(season)}</div>
+        <h1 class="${rv(1)}">Trouve<br><span class="out">ta</span> <span class="red">fiche.</span></h1>
+        <p class="sub ${rv(2)}">Tes records, ta progression, tes séries et les records du 95 de ta catégorie.</p>
+        <div class="stats ${rv(3)}">
+          <div class="stat"><div class="v" data-count="${D.athletes.length}">0</div><div class="l">Athlètes</div></div>
+          <div class="stat"><div class="v" data-count="${comps}">0</div><div class="l">Compétitions</div></div>
+          <div class="stat"><div class="v" data-count="${recSeason}">0</div><div class="l">Records cette saison</div></div>
+        </div>
+      </section>
+      ${last.length ? `<div class="ticker ${rv(4)}"><div class="ticker-track">${tk}${tk}</div></div>` : ""}
+      <div class="search ${rv(5)}"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" id="q" placeholder="Ton nom ou ta licence…" value="${esc(state.q)}" autocomplete="off"></div>
+      <div class="chips ${rv(5)}">
         <button class="chip ${!state.club ? "on" : ""}" data-club="">Tous les clubs</button>
-        ${clubs.map((c) => `<button class="chip ${state.club === c ? "on" : ""}" data-club="${esc(c)}">${esc(c)}</button>`).join("")}
+        ${clubs.map((c) => `<button class="chip ${state.club === c ? "on" : ""}" data-club="${esc(c)}"><span class="dot" style="background:${clubColor(c)}"></span>${esc(clubShort(c))}</button>`).join("")}
       </div>
-      <input type="search" id="q" placeholder="Ton nom ou ta licence…" value="${esc(state.q)}" autocomplete="off">
-      <p class="muted small">${list.length} athlète${list.length > 1 ? "s" : ""} · les plus récents en premier</p>
-      <div class="alist">
-        ${list.map((a) => `
-          <a class="aitem" href="#/a/${encodeURIComponent(a.licence)}">
-            <span><b>${esc(a.name)}</b><br><span class="muted small">${esc(a.club)}</span></span>
-            <span class="tag">${esc(a.age_cat)} · ${frDate(a.last_date).slice(3)}</span>
-          </a>`).join("") || `<p class="empty">Aucun athlète trouvé.</p>`}
-      </div>`;
-    $app.querySelectorAll("[data-club]").forEach((b) => b.addEventListener("click", () => { state.club = b.dataset.club || null; viewHome(); }));
+      <p class="count">${list.length} athlète${list.length > 1 ? "s" : ""} · les plus récents en premier</p>
+      <div class="alist">${listHtml}</div>`;
+    $app.querySelectorAll("[data-club]").forEach((b) => b.addEventListener("click", () => {
+      state.club = b.dataset.club || null;
+      $app.querySelectorAll("[data-club]").forEach((x) => x.classList.toggle("on", x === b));
+      viewHome(true);
+    }));
     const inp = $app.querySelector("#q");
-    inp.addEventListener("input", () => { state.q = inp.value; const pos = inp.selectionStart; viewHome(); const n = $app.querySelector("#q"); n.focus(); n.setSelectionRange(pos, pos); });
+    inp.addEventListener("input", () => { state.q = inp.value; viewHome(true); });
+    animate();
   }
 
   // ---------- fiche athlète
@@ -67,52 +135,75 @@
     if (!a) { $app.innerHTML = `<p class="pad center">Athlète introuvable. <a href="#/">Retour</a></p>`; return; }
     const rows = a.results.map((id) => D.results[id]).reverse();
     const catTxt = `${a.age_cat} ${a.sex} ${a.weight_class || ""}`.trim();
+    const { last, first } = splitName(a.name);
+    const C = 2 * Math.PI * 40;
 
-    const tiles = LIFTS.map(([k, label]) => {
+    const lifts = LIFTS.map(([k, label], i) => {
       const pb = a.pb[k];
       const rec = a.record95[k];
-      let foot = `<div class="line">Record du 95 (${esc(catTxt)}) : pas encore de record</div>`;
-      if (rec) {
-        const mine = rec.licence === a.licence;
+      const mine = rec && rec.licence === a.licence;
+      let side = "", foot = `<div class="rec">Pas encore de record du 95 dans ta catégorie</div>`;
+      if (mine) {
+        side = `<div class="trophy">🏆</div>`;
+        foot = `<div class="rec">Record du 95 · ${esc(catTxt)}</div>`;
+      } else if (rec) {
         const pct = pb ? Math.min(100, Math.round((pb.value / rec.value) * 100)) : 0;
-        foot = mine
-          ? `<div class="line crown">🏆 Tu détiens le record du 95 (${esc(catTxt)})</div>`
-          : `<div class="bar"><i style="width:${pct}%"></i></div>
-             <div class="line">Record du 95 : <b>${kg(rec.value)} kg</b> · ${esc(rec.athlete)}<br>
-             Encore ${kg(Math.max(0, rec.value - (pb ? pb.value : 0)))} kg · ${pct} % du record</div>`;
+        side = `<div class="ring"><svg viewBox="0 0 100 100"><circle class="trk" cx="50" cy="50" r="40"/>
+          <circle class="prg" style="stroke:${LC[k]}" cx="50" cy="50" r="40" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}" data-off="${(C * (1 - pct / 100)).toFixed(1)}"/></svg>
+          <div class="pct"><span><span data-count="${pct}">0</span>%<small>du record</small></span></div></div>`;
+        foot = `<div class="rec">Record du 95 : <b>${kg(rec.value)} kg</b> · ${athleteLink(rec.licence, rec.athlete)}<br>
+          Encore <b>${kg(Math.max(0, +(rec.value - (pb ? pb.value : 0)).toFixed(1)))} kg</b> à aller chercher</div>`;
       }
-      return `<div class="tile"><div class="lbl">Record ${label}</div>
-        <div class="val">${pb ? kg(pb.value) : "—"} <small>kg</small></div>
-        ${pb ? `<div class="line">le ${frDate(pb.date)}</div>` : ""}${foot}</div>`;
+      return `<div class="lift ${mine ? "crown" : ""} ${rv(4 + i)}" style="--lc:${LC[k]}">
+        <div class="body"><div class="lbl">${label}</div>
+          <div class="val">${pb ? `<span data-count="${pb.value}">0</span>` : "—"}<small>kg</small></div>
+          <div class="when">${pb ? `le ${longDate(pb.date)}` : "pas encore de barre validée"}</div>${foot}</div>${side}</div>`;
     }).join("");
 
+    const seasons = Object.values(a.best_total_by_season);
     $app.innerHTML = `
-      <a href="#/" class="back">← Tous les athlètes</a>
-      <h1>${esc(a.name)}</h1>
-      <div class="sub">${esc(a.club)} · ${sexLabel(a.sex)} · Catégorie ${esc(catTxt)}${a.last_bw ? ` (dernier poids de corps : ${kg(a.last_bw)} kg)` : ""} · Dernière compétition : ${frDate(a.last_date)}</div>
-      <div class="tiles">
-        ${tiles}
-        <div class="tile"><div class="lbl">Compétitions</div>
-          <div class="val">${a.n_competitions}</div>
-          <div class="line">depuis ${monthYear(a.first_date)}${a.best_iwf ? `<br>Meilleur score IWF : ${kg(a.best_iwf)}` : ""}</div></div>
+      <a href="#/" class="back ${rv(0)}">← Tous les athlètes</a>
+      <section class="ahero">
+        ${a.pb.total ? `<div class="bgnum">${a.pb.total.value}</div>` : ""}
+        <div class="eyebrow ${rv(1)}">${esc(clubShort(a.club))}</div>
+        <h1 class="${rv(2)}">${first ? `<span class="first">${esc(first)}</span>` : ""}${esc(last)}</h1>
+        <div class="meta ${rv(3)}">
+          <span class="pill red">${esc(catTxt)}</span>
+          <span class="pill">${sexLabel(a.sex)}</span>
+          ${a.last_bw ? `<span class="pill"><i>Poids de corps</i> ${kg(a.last_bw)} kg</span>` : ""}
+          <span class="pill"><i>Dernière compét.</i> ${longDate(a.last_date)}</span>
+        </div>
+      </section>
+      <div class="lifts">${lifts}</div>
+      <div class="kpis ${rv(7)}">
+        <div class="kpi"><div class="v" data-count="${a.n_competitions}">0</div><div class="l">Compétitions</div></div>
+        <div class="kpi"><div class="v">${a.best_iwf ? `<span data-count="${a.best_iwf}">0</span>` : "—"}</div><div class="l">Meilleur score IWF</div></div>
+        <div class="kpi"><div class="v">${seasons.length}</div><div class="l">Saison${seasons.length > 1 ? "s" : ""} · depuis ${monthYear(a.first_date)}</div></div>
       </div>
-      <div class="grid2">
-        <div class="card chart"><h2>Ma progression en compétition</h2>${chart(rows.slice().reverse())}
+      <div class="grid2 ${rv(8)}">
+        <div class="card chart draw"><div class="card-h"><h2>Ma progression</h2>
           <div class="legend"><span><i style="background:var(--snatch)"></i>Arraché</span><span><i style="background:var(--cj)"></i>Épaulé-jeté</span><span><i style="background:var(--total)"></i>Total</span></div></div>
+          ${chart(rows.slice().reverse())}</div>
         <div class="card"><h2>Meilleur total par saison</h2>${seasonBars(a.best_total_by_season)}</div>
       </div>
       ${levelsCard(a)}
-      <div class="card"><h2>Mes compétitions</h2>${resultsTable(rows, state.showAll ? rows.length : 10)}
+      <div class="card ${rv(10)}"><div class="card-h"><h2>Mes compétitions</h2><span class="muted small">${rows.length} au total</span></div>
+        ${resultsTable(rows, state.showAll ? rows.length : 10)}
         ${rows.length > 10 ? `<button class="btn" id="more">${state.showAll ? "Voir moins" : `Voir les ${rows.length} compétitions`}</button>` : ""}
-        <p class="muted small">Badge rouge = record du 95 battu ce jour-là (dans ta catégorie ou une catégorie au-dessus). Les essais barrés sont ratés.</p></div>`;
+        <p class="note">🏆 = record du 95 battu ce jour-là (dans ta catégorie ou une catégorie au-dessus). Les essais barrés en rouge sont ratés.</p></div>`;
     const more = $app.querySelector("#more");
     if (more) more.addEventListener("click", () => { state.showAll = !state.showAll; viewAthlete(lic); });
+    $app.querySelectorAll(".chart .ln").forEach((p) => p.style.setProperty("--len", Math.ceil(p.getTotalLength())));
+    bindChart(rows.slice().reverse());
+    animate();
   }
 
+  let CH = null; // géométrie du graphique courant (pour l'info-bulle)
   function chart(rows) {
     const pts = rows.filter((r) => r.total && r.date);
+    CH = null;
     if (pts.length < 2) return `<p class="empty">Il faut au moins deux compétitions pour tracer la courbe.</p>`;
-    const W = 640, H = 260, L = 38, R = 10, T = 10, B = 26;
+    const W = 640, H = 280, L = 34, R = 12, T = 14, B = 28;
     const t0 = Date.parse(pts[0].date), t1 = Date.parse(pts[pts.length - 1].date);
     const maxV = Math.max(...pts.map((r) => r.total)), minV = Math.min(...pts.map((r) => r.snatch || r.total));
     const lo = Math.max(0, Math.floor((minV * 0.85) / 10) * 10), hi = Math.ceil((maxV * 1.05) / 10) * 10;
@@ -121,19 +212,61 @@
     const step = (hi - lo) > 150 ? 50 : (hi - lo) > 60 ? 20 : 10;
     let grid = "";
     for (let v = Math.ceil(lo / step) * step; v <= hi; v += step)
-      grid += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${L - 6}" y="${y(v) + 4}" font-size="11" text-anchor="end" fill="var(--muted)">${v}</text>`;
+      grid += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="rgba(255,255,255,.06)"/><text x="${L - 8}" y="${y(v) + 4}" font-size="11" text-anchor="end" fill="var(--dim)">${v}</text>`;
     const y0 = new Date(t0).getFullYear(), y1 = new Date(t1).getFullYear();
     for (let yr = y0 + 1; yr <= y1; yr++) {
       const xx = x(`${yr}-01-01`);
-      grid += `<line x1="${xx}" x2="${xx}" y1="${T}" y2="${H - B}" stroke="var(--line)" stroke-dasharray="3 3"/><text x="${xx}" y="${H - 8}" font-size="11" text-anchor="middle" fill="var(--muted)">${yr}</text>`;
+      grid += `<text x="${xx}" y="${H - 6}" font-size="11" font-weight="600" text-anchor="middle" fill="var(--dim)">${yr}</text>`;
     }
-    const line = (k, color) => {
-      const p = pts.filter((r) => r[k]);
-      const d = p.map((r, i) => `${i ? "L" : "M"}${x(r.date).toFixed(1)},${y(r[k]).toFixed(1)}`).join("");
-      const dots = p.map((r) => `<circle cx="${x(r.date).toFixed(1)}" cy="${y(r[k]).toFixed(1)}" r="3" fill="${color}"><title>${frDate(r.date)} · ${kg(r[k])} kg · ${esc(r.competition)}</title></circle>`).join("");
-      return `<path d="${d}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linejoin="round"/>${dots}`;
+    const path = (k) => pts.filter((r) => r[k]).map((r, i) => `${i ? "L" : "M"}${x(r.date).toFixed(1)},${y(r[k]).toFixed(1)}`).join("");
+    const tp = pts.map((r) => [x(r.date).toFixed(1), y(r.total).toFixed(1)]);
+    const area = `M${tp[0][0]},${H - B}` + tp.map(([a, b]) => `L${a},${b}`).join("") + `L${tp[tp.length - 1][0]},${H - B}Z`;
+    const best = pts.reduce((m, r) => (r.total > m.total ? r : m), pts[0]);
+    CH = { pts, x, y, W, T, H, B };
+    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Progression">
+      <defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f5c04a" stop-opacity=".28"/><stop offset="1" stop-color="#f5c04a" stop-opacity="0"/></linearGradient></defs>
+      ${grid}<path class="area" d="${area}" fill="url(#ga)"/>
+      <path class="ln s" d="${path("snatch")}" stroke="var(--snatch)"/>
+      <path class="ln c" d="${path("cj")}" stroke="var(--cj)"/>
+      <path class="ln t" d="${path("total")}" stroke="var(--total)" stroke-width="3.2"/>
+      <g class="pt"><circle cx="${x(best.date)}" cy="${y(best.total)}" r="11" fill="rgba(245,192,74,.18)"/><circle cx="${x(best.date)}" cy="${y(best.total)}" r="5" fill="var(--total)"/>
+        <text x="${Math.min(W - R - 4, x(best.date))}" y="${y(best.total) - 16}" text-anchor="${x(best.date) > W - 60 ? "end" : "middle"}" font-size="13" font-weight="800" fill="var(--total)">${best.total} kg</text></g>
+      <line class="hair" id="hair" x1="0" x2="0" y1="${T}" y2="${H - B}" visibility="hidden"/>
+      <g id="hdots" visibility="hidden"><circle r="5" fill="var(--snatch)" stroke="#16161a" stroke-width="2"/><circle r="5" fill="var(--cj)" stroke="#16161a" stroke-width="2"/><circle r="6" fill="var(--total)" stroke="#16161a" stroke-width="2"/></g>
+      <rect id="hit" x="${L}" y="0" width="${W - L - R}" height="${H}" fill="transparent"/></svg>`;
+  }
+
+  function bindChart() {
+    const svg = $app.querySelector(".chart svg");
+    if (!svg || !CH) return;
+    const hair = svg.querySelector("#hair"), dots = svg.querySelectorAll("#hdots circle"), g = svg.querySelector("#hdots");
+    const hide = () => { $tip.hidden = true; hair.setAttribute("visibility", "hidden"); g.setAttribute("visibility", "hidden"); };
+    const move = (ev) => {
+      const r = svg.getBoundingClientRect();
+      const sx = ((ev.clientX - r.left) / r.width) * CH.W;
+      let best = CH.pts[0], bd = Infinity;
+      for (const p of CH.pts) { const d = Math.abs(CH.x(p.date) - sx); if (d < bd) { bd = d; best = p; } }
+      const px = CH.x(best.date);
+      hair.setAttribute("x1", px); hair.setAttribute("x2", px); hair.setAttribute("visibility", "visible");
+      g.setAttribute("visibility", "visible");
+      ["snatch", "cj", "total"].forEach((k, i) => {
+        if (best[k]) { dots[i].setAttribute("cx", px); dots[i].setAttribute("cy", CH.y(best[k])); dots[i].style.display = ""; } else dots[i].style.display = "none";
+      });
+      $tip.innerHTML = `<div class="d">${longDate(best.date)} · ${esc(best.weight_class || "")}</div>
+        <div class="r"><span style="color:var(--snatch)">Arraché</span><b>${kg(best.snatch) || "—"}</b></div>
+        <div class="r"><span style="color:var(--cj)">Épaulé-jeté</span><b>${kg(best.cj) || "—"}</b></div>
+        <div class="r"><span style="color:var(--total)">Total</span><b>${kg(best.total)}</b></div>
+        <div class="c">${esc(best.competition)}</div>`;
+      $tip.hidden = false;
+      const tx = r.left + (px / CH.W) * r.width, tw = $tip.offsetWidth;
+      $tip.style.left = `${Math.max(8, Math.min(innerWidth - tw - 8, tx - tw / 2))}px`;
+      const th = $tip.offsetHeight, above = ev.clientY - th - 18;
+      $tip.style.top = `${above > 76 ? above : ev.clientY + 22}px`;
     };
-    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Progression">${grid}${line("snatch", "var(--snatch)")}${line("cj", "var(--cj)")}${line("total", "var(--total)")}</svg>`;
+    svg.addEventListener("pointermove", move);
+    svg.addEventListener("pointerdown", move);
+    svg.addEventListener("pointerleave", hide);
+    addEventListener("scroll", hide, { passive: true, once: true });
   }
 
   function seasonBars(obj) {
@@ -141,26 +274,31 @@
     if (!entries.length) return `<p class="empty">Pas encore de total valide.</p>`;
     const max = Math.max(...entries.map(([, v]) => v));
     return `<div class="seasons">${entries.map(([s, v]) => `
-      <div class="season-row"><span class="muted">${esc(s)}</span><span class="b" style="width:${Math.max(4, (v / max) * 100)}%"></span><b class="num">${v} kg</b></div>`).join("")}</div>`;
+      <div class="season-row ${v === max ? "best" : ""}"><span class="s">${esc(s.replace(/^20(\d\d)\/20(\d\d)$/, "$1/$2"))}</span>
+        <span class="t"><span class="b" data-w="${Math.max(4, (v / max) * 100)}%"></span></span>
+        <span class="n"><span data-count="${v}">0</span> <small class="muted">kg</small></span></div>`).join("")}</div>`;
   }
 
   function levelsCard(a) {
-    const block = (scale, levels) => `<div class="levels">${levels.map((l) => {
-      const got = a.levels[`${scale}:${l.key}`];
-      const codes = l.codes.join(" · ");
-      return `<div class="lvl ${got ? "got" : ""}"><div class="code">${esc(codes)}</div><div class="name">${esc(l.label)}</div>
-        <div class="when">${got ? `${frDate(got.first)}<br><span class="muted small">${got.count} fois</span>` : "—"}</div></div>`;
-    }).join("")}</div>`;
+    const block = (scale, levels) => {
+      const gotKeys = levels.filter((l) => a.levels[`${scale}:${l.key}`]).map((l) => l.key);
+      const top = gotKeys[gotKeys.length - 1];
+      return `<div class="levels">${levels.map((l) => {
+        const got = a.levels[`${scale}:${l.key}`];
+        return `<div class="lvl ${got ? "got" : ""} ${l.key === top ? "top" : ""}"><div class="code">${esc(l.codes.join(" · "))}</div><div class="name">${esc(l.label)}</div>
+          <div class="when">${got ? `${frDate(got.first)}<br><span class="muted small">${got.count} fois</span>` : "à venir"}</div></div>`;
+      }).join("")}</div>`;
+    };
     const hasMasters = Object.keys(a.levels).some((k) => k.startsWith("masters:"));
     const hist = a.level_history.slice().sort((x, y) => x.date.localeCompare(y.date));
-    return `<div class="card"><h2>Mes niveaux de performance (séries FFHM)</h2>
-      <p class="muted small">La série est attribuée par la Fédé selon le total réalisé. En vert : niveaux déjà atteints, avec la date de la première fois et le nombre de fois.</p>
+    return `<div class="card ${rv(9)}"><div class="card-h"><h2>Mes séries FFHM</h2><span class="muted small">en or : ton meilleur niveau</span></div>
       ${block("ffhm", D.meta.series_levels)}
-      ${hasMasters ? `<h2 style="margin-top:16px">Séries Masters</h2>${block("masters", D.meta.masters_levels)}` : ""}
-      ${hist.length ? `<h2 style="margin-top:16px">Chaque nouveau niveau atteint</h2><div class="tbl-wrap"><table>
-        <tr><th>Niveau</th><th>Date</th><th>Cat.</th><th class="num">Total</th><th>Compétition</th></tr>
-        ${hist.map((h) => `<tr><td><b>${esc(h.level)}</b></td><td>${frDate(h.date)}</td><td>${esc(h.age_cat)}</td><td class="num">${h.total}</td><td class="comp">${esc(h.competition)}</td></tr>`).join("")}
-      </table></div>` : ""}</div>`;
+      ${hasMasters ? `<div class="h3">Séries Masters</div>${block("masters", D.meta.masters_levels)}` : ""}
+      ${hist.length ? `<div class="h3">Chaque nouveau niveau atteint</div><div class="tbl-wrap"><table>
+        <thead><tr><th>Niveau</th><th>Date</th><th>Cat.</th><th class="num">Total</th><th>Compétition</th></tr></thead><tbody>
+        ${hist.map((h) => `<tr><td><span class="serie">${esc(h.level)}</span></td><td>${frDate(h.date)}</td><td>${esc(h.age_cat)}</td><td class="num tot"><b>${h.total}</b></td><td class="comp">${esc(h.competition)}</td></tr>`).join("")}
+      </tbody></table></div>` : ""}
+      <p class="note">La série est attribuée par la Fédé selon le total réalisé. En vert : niveaux déjà atteints, avec la date de la première fois.</p></div>`;
   }
 
   function attempts(arr) {
@@ -170,18 +308,18 @@
 
   function resultsTable(rows, n) {
     return `<div class="tbl-wrap"><table>
-      <tr><th>Date</th><th>Compétition</th><th>Cat.</th><th class="num">PC</th><th class="num">Arr.</th><th class="num">É-J</th><th class="num">Total</th><th>Série</th></tr>
+      <thead><tr><th>Date</th><th>Compétition</th><th>Cat.</th><th class="num">PC</th><th class="num">Arr.</th><th class="num">É-J</th><th class="num">Total</th><th>Série</th></tr></thead><tbody>
       ${rows.slice(0, n).map((r) => `<tr>
-        <td>${frDate(r.date)}</td>
+        <td class="num" style="text-align:left">${frDate(r.date)}</td>
         <td class="comp">${r.competition_url ? `<a href="${esc(r.competition_url)}" target="_blank" rel="noopener">${esc(r.competition)}</a>` : esc(r.competition)}
-          ${r.records.length ? `<br><span class="badge" title="${esc(r.records.join(" · "))}">Record 95 · ${esc(r.records[0])}${r.records.length > 1 ? ` +${r.records.length - 1}` : ""}</span>` : ""}</td>
+          ${r.records.length ? `<br><span class="badge" title="${esc(r.records.join(" · "))}">🏆 Record 95 · ${esc(r.records[0])}${r.records.length > 1 ? ` +${r.records.length - 1}` : ""}</span>` : ""}</td>
         <td>${esc(r.age_cat)}<br><span class="muted small">${esc(r.weight_class || "")}</span></td>
-        <td class="num">${kg(r.bw)}</td>
+        <td class="num muted">${kg(r.bw)}</td>
         <td class="num"><b>${r.snatch || "0"}</b>${attempts(r.snatch_attempts)}</td>
         <td class="num"><b>${r.cj || "0"}</b>${attempts(r.cj_attempts)}</td>
-        <td class="num"><b>${r.total || "—"}</b></td>
-        <td>${esc(r.series)}</td></tr>`).join("")}
-    </table></div>`;
+        <td class="num tot"><b>${r.total || "—"}</b></td>
+        <td>${r.series ? `<span class="serie">${esc(r.series)}</span>` : ""}</td></tr>`).join("")}
+    </tbody></table></div>`;
   }
 
   // ---------- records du 95
@@ -193,20 +331,30 @@
     const ages = [...new Set(inPeriod.map((r) => r.age_cat))].sort((a, b) => ageSort(a) - ageSort(b));
     if (!ages.includes(state.recAge)) state.recAge = "Senior";
     const list = inPeriod.filter((r) => r.age_cat === state.recAge);
-    const cell = (rec) => rec
-      ? `<td class="rec-holder"><b>${kg(rec.value)} kg</b><br>${athleteLink(rec.licence, rec.athlete)}<br><span class="muted">${frDate(rec.date)}</span></td>`
-      : `<td class="empty">—</td>`;
+    const row = (k, rec) => rec
+      ? `<div class="rrow" style="--lc:${LC[k]}"><span class="k">${SHORT[k]}</span>
+          <span class="h">${athleteLink(rec.licence, rec.athlete)}<span>${frDate(rec.date)} · ${esc(clubShort(rec.club))}</span></span>
+          <span class="v">${kg(rec.value)}<small> kg</small></span></div>`
+      : `<div class="rrow none" style="--lc:${LC[k]}"><span class="k">${SHORT[k]}</span><span class="h">Record à prendre</span><span class="v">—</span></div>`;
     $app.innerHTML = `
-      <h1>Records du Val d'Oise</h1>
-      <div class="sub">Calculés sur les résultats de l'AFHMA Franconville, du HFC CP95 Cergy et de WIM LIFT depuis 2020/21.
-        Une perf compte dans la catégorie d'âge de l'athlète et dans celles au-dessus (U15 → U17, U20, Senior ; Masters → leur tranche + Senior ; U13 → U13 uniquement). Catégorie de poids recalculée d'après le poids de corps. Seules les perfs avec un total valide comptent.</div>
-      <div class="chips">${periods.map((p) => `<button class="chip ${p === state.recPeriod ? "on" : ""}" data-p="${p}">${esc(D.meta.periods[p])}</button>`).join("")}</div>
-      <div class="chips">${["F", "M"].map((s) => `<button class="chip ${s === state.recSex ? "on" : ""}" data-s="${s}">${sexPlural(s)}</button>`).join("")}</div>
-      <div class="chips">${ages.map((a) => `<button class="chip ${a === state.recAge ? "on" : ""}" data-a="${a}">${a}</button>`).join("")}</div>
-      <div class="card"><div class="tbl-wrap"><table>
-        <tr><th>Catégorie</th><th>Arraché</th><th>Épaulé-jeté</th><th>Total</th></tr>
-        ${list.map((r) => `<tr><td><b>${esc(r.weight_class)}</b></td>${cell(r.snatch)}${cell(r.cj)}${cell(r.total)}</tr>`).join("")}
-      </table></div></div>`;
+      <div class="eyebrow ${rv(0)}">AFHMA · HFC CP95 · WIM Lift</div>
+      <h1 class="${rv(1)}">Records<br><span class="out">du</span> <span class="red">95.</span></h1>
+      <p class="sub ${rv(2)}">Les meilleures barres du Val d'Oise depuis 2020/21, catégorie par catégorie.</p>
+      <div class="${rv(3)}">
+        <div class="chips">${periods.map((p) => `<button class="chip ${p === state.recPeriod ? "on" : ""}" data-p="${p}">${esc(D.meta.periods[p])}</button>`).join("")}</div>
+        <div class="seg">${["F", "M"].map((s) => `<button class="${s === state.recSex ? "on" : ""}" data-s="${s}">${sexPlural(s)}</button>`).join("")}</div>
+        <div class="chips">${ages.map((a) => `<button class="chip ${a === state.recAge ? "on" : ""}" data-a="${a}">${a}</button>`).join("")}</div>
+      </div>
+      <div class="rgrid">
+        ${list.map((r, i) => `<div class="rcard ${rv(4 + Math.min(i, 10))}">
+          <div class="rcard-h"><span class="w">${esc(r.weight_class.replace(" kg", ""))}<small>kg</small></span>
+            ${r.total ? `<span class="t"><b>${kg(r.total.value)}</b><span>kg au total</span></span>` : ""}</div>
+          ${row("snatch", r.snatch)}${row("cj", r.cj)}${row("total", r.total)}</div>`).join("") || `<p class="empty">Aucune catégorie.</p>`}
+      </div>
+      <details class="rules"><summary>Comment sont calculés ces records ?</summary>
+        <p>Calculés sur les résultats de l'AFHMA Franconville, du HFC CP95 Cergy et de WIM LIFT depuis 2020/21.
+        Une perf compte dans la catégorie d'âge de l'athlète et dans celles au-dessus (U15 → U17, U20, Senior ; Masters → leur tranche + Senior ; U13 → U13 uniquement).
+        Catégorie de poids recalculée d'après le poids de corps. Seules les perfs avec un total valide comptent.</p></details>`;
     $app.querySelectorAll("[data-p]").forEach((b) => b.addEventListener("click", () => { state.recPeriod = b.dataset.p; viewRecords(); }));
     $app.querySelectorAll("[data-s]").forEach((b) => b.addEventListener("click", () => { state.recSex = b.dataset.s; viewRecords(); }));
     $app.querySelectorAll("[data-a]").forEach((b) => b.addEventListener("click", () => { state.recAge = b.dataset.a; viewRecords(); }));
@@ -217,25 +365,38 @@
     setNav("derniers");
     const label = Object.fromEntries(LIFTS);
     const items = D.records.history.slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 60);
+    const days = [];
+    for (const h of items) {
+      const k = h.date + "|" + h.competition;
+      if (!days.length || days[days.length - 1].k !== k) days.push({ k, date: h.date, comp: h.competition, items: [] });
+      days[days.length - 1].items.push(h);
+    }
+    let n = 0;
     $app.innerHTML = `
-      <h1>Derniers records battus</h1>
-      <div class="sub">Les 60 derniers records du 95 battus, toutes catégories confondues.</div>
-      <div class="card"><div class="tbl-wrap"><table>
-        <tr><th>Date</th><th>Athlète</th><th>Catégorie</th><th>Mouvement</th><th class="num">Record</th><th class="num">Ancien</th></tr>
-        ${items.map((h) => `<tr><td>${frDate(h.date)}</td><td>${athleteLink(h.licence, h.athlete)}<br><span class="muted small">${esc(h.club)}</span></td>
-          <td>${esc(h.age_cat)} ${h.sex} ${esc(h.weight_class)}</td><td>${label[h.lift]}</td><td class="num"><b>${kg(h.value)} kg</b></td>
-          <td class="num muted">${h.previous ? `${kg(h.previous)} kg<br><span class="small">${esc(h.previous_holder)}</span>` : "nouveau"}</td></tr>`).join("")}
-      </table></div></div>`;
+      <div class="eyebrow ${rv(0)}">Les 60 derniers</div>
+      <h1 class="${rv(1)}">Ça <span class="out">vient de</span><br><span class="red">tomber.</span></h1>
+      <p class="sub ${rv(2)}">Les derniers records du 95 battus, toutes catégories confondues.</p>
+      <div class="tl">${days.map((d) => `
+        <div class="tl-day ${rv(Math.min(n++, 12) + 3)}">${longDate(d.date)}<small>${esc(d.comp)}</small></div>
+        <div class="tl-items">${d.items.map((h) => `
+          <a class="rec-item ${rv(Math.min(n++, 14) + 3)}" href="#/a/${encodeURIComponent(h.licence)}">
+            <span class="big"><b>${kg(h.value)}</b><span>kg</span></span>
+            <span class="info"><b>${esc(h.athlete)}</b>
+              <div class="c"><span class="liftk" style="--lc:${LC[h.lift]}">${esc(label[h.lift])}</span> ${esc(h.age_cat)} ${h.sex} ${esc(h.weight_class)}</div>
+              ${h.previous ? `<span class="delta">+${kg(+(h.value - h.previous).toFixed(1))} kg</span> <span class="muted small">ancien : ${kg(h.previous)} · ${esc(h.previous_holder)}</span>`
+                : `<span class="delta new">Nouveau record</span>`}</span>
+          </a>`).join("")}</div>`).join("")}</div>`;
   }
 
   // ---------- routeur
   function route() {
     const h = location.hash.replace(/^#/, "") || "/";
-    if (h.startsWith("/a/")) { viewAthlete(decodeURIComponent(h.slice(3))); }
+    $tip.hidden = true;
+    if (!h.startsWith("/a/")) state.showAll = false;
+    if (h.startsWith("/a/")) viewAthlete(decodeURIComponent(h.slice(3)));
     else if (h === "/records") viewRecords();
     else if (h === "/derniers") viewLatest();
     else viewHome();
-    if (!h.startsWith("/a/")) state.showAll = false;
     window.scrollTo(0, 0);
   }
 
