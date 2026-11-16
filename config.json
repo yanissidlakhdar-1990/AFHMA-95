@@ -1,0 +1,6 @@
+{
+  "clubs": ["AFHMA FRANCONVILLE", "HFC CP95 CERGY", "WIM LIFT"],
+  "first_season": "2020/2021",
+  "base_url": "https://scoresheet.ffhaltero.fr",
+  "delay_seconds": 1.0
+}

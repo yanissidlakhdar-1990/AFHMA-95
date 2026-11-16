@@ -1,0 +1,60 @@
+name: Mise à jour des résultats
+
+on:
+  schedule:
+    - cron: "0 5 * * *"   # tous les jours vers 6 h (heure de Paris en hiver, 7 h en été)
+  workflow_dispatch:       # bouton « Run workflow » pour lancer à la main
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Installer les dépendances
+        run: pip install -r requirements.txt
+
+      - name: Récupérer les résultats sur le site de la Fédé
+        run: python scripts/scrape.py
+
+      - name: Calculer records, séries et fiches
+        run: python scripts/build.py
+
+      - name: Enregistrer les nouvelles données
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data site/data
+          if git diff --cached --quiet; then
+            echo "Pas de changement."
+          else
+            git commit -m "Mise à jour des résultats ($(date -u +%Y-%m-%d))"
+            git push
+          fi
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Mettre le site en ligne
+        id: deploy
+        uses: actions/deploy-pages@v4
