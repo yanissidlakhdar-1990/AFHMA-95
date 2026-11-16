@@ -95,3 +95,20 @@ fav_body = (f'<rect x="20" y="20" width="360" height="360" rx="80" fill="#ffffff
             f'<g transform="translate(-4 52) scale(1.02)">{EMBLEM}</g>')
 (OUT / "favicon.svg").write_text(svg("20 20 360 360", fav_body, style("#141414", "#9ca1a8", "#ffffff")))
 print("ok", [p.name for p in OUT.iterdir()])
+
+# ---- version horizontale (en-tête du site) : même emblème + même « AFHMA » + FRANCONVILLE
+#      encre = currentColor (suit le thème), rouge du club conservé
+def lockup_h():
+    (ga, wa), (gf, wf) = run(bsd, "A", 138), run(bsd, "FHM", 74, 0.03)
+    widths = [wa * 1.5, wf * 1.3, wa * 1.5]
+    total = sum(widths) + 12
+    x0 = 392
+    word_svg = lockup([(bsd, "A", 138, "red", 1.5, 0), (bsd, "FHM", 74, "ink", 1.3, 0.03), (bsd, "A", 138, "red", 1.5, 0)], x0 + total / 2, 196, 6)
+    town_svg = placed(arc, "FRANCONVILLE", 33, x0 + total / 2, 244, 0.05, lambda ch, i: "town")
+    return f"0 0 {x0 + total + 8:.0f} 262", EMBLEM + word_svg + town_svg
+
+view_h, body_h = lockup_h()
+CSS_SITE = ("<style>.ink{fill:currentColor}.ink-s,.bar{stroke:currentColor}.red{fill:#d71a2c}.red-s{stroke:#d71a2c}"
+            ".plate{fill:var(--surface,#fff);stroke:currentColor}.town{fill:currentColor;opacity:.62}</style>")
+(OUT / "lockup.svg").write_text(svg(view_h, body_h, CSS_SITE))
+(OUT / "lockup-light.svg").write_text(svg(view_h, body_h, style("#141414", "#9ca1a8", "#ffffff")))

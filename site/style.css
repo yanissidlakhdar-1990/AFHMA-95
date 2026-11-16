@@ -538,3 +538,12 @@ tr:last-child td { border-bottom: none; }
 .hero > .eyebrow { padding-right: calc(clamp(96px, 26vw, 250px) + 12px); }
 @media (max-width: 720px) { .hero > .eyebrow { padding-right: 108px; } }
 @media (max-width: 380px) { .hero > .eyebrow { padding-right: 90px; } }
+
+/* en-tête : le logo horizontal du club (même emblème, mêmes lettres) */
+.brand .lockup { height: 42px; width: auto; display: block; color: var(--ink); --surface: var(--bg); }
+[data-theme="light"] .brand .lockup { color: #fff; --surface: var(--navy); }
+.brand-tag { background: transparent; color: var(--muted); font-weight: 700; padding: 4px 0 3px 12px; margin-left: 0; border-left: 1px solid var(--line2); border-radius: 0; }
+[data-theme="light"] .brand-tag { color: rgba(255, 255, 255, .7); border-left-color: rgba(255, 255, 255, .25); }
+.hero > .eyebrow { padding-right: 0; }
+@media (max-width: 720px) { .brand .lockup { height: 34px; } .brand-tag { display: none; } }
+@media (max-width: 720px) { .ring .pct small { font-size: 7.5px; letter-spacing: .3px; } }

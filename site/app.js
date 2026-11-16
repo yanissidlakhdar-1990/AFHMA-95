@@ -100,8 +100,7 @@
 
     $app.innerHTML = `
       <section class="hero">
-        <div class="hero-logo ${rv(1)}"><img class="only-light" src="img/logo-afhma.svg" alt="Logo AFHMA Franconville"><img class="only-dark" src="img/logo-afhma-dark.svg" alt="Logo AFHMA Franconville"></div>
-        <div class="eyebrow ${rv(0)}">AFHMA Franconville · Saison ${esc(season)}</div>
+        <div class="eyebrow ${rv(0)}">Saison ${esc(season)}</div>
         <h1 class="${rv(1)}">Trouve<br><span class="out">ta</span> <span class="red">fiche.</span></h1>
         <p class="sub ${rv(2)}">Tes records, ta progression, tes séries et les records du 95 de ta catégorie.</p>
         <div class="stats ${rv(3)}">
@@ -143,7 +142,7 @@
       const pb = a.pb[k];
       const rec = a.record95[k];
       const mine = rec && rec.licence === a.licence;
-      let side = "", foot = `<div class="rec">Pas encore de record du 95 dans ta catégorie</div>`;
+      let side = "", foot = "";
       if (mine) {
         side = `<div class="trophy">🏆</div>`;
         foot = `<div class="rec">Record du 95 · ${esc(catTxt)}</div>`;
@@ -152,8 +151,6 @@
         side = `<div class="ring"><svg viewBox="0 0 100 100"><circle class="trk" cx="50" cy="50" r="40"/>
           <circle class="prg" style="stroke:${LC[k]}" cx="50" cy="50" r="40" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}" data-off="${(C * (1 - pct / 100)).toFixed(1)}"/></svg>
           <div class="pct"><span><span data-count="${pct}">0</span>%<small>du record</small></span></div></div>`;
-        foot = `<div class="rec">Record du 95 : <b>${kg(rec.value)} kg</b> · ${athleteLink(rec.licence, rec.athlete)}<br>
-          Encore <b>${kg(Math.max(0, +(rec.value - (pb ? pb.value : 0)).toFixed(1)))} kg</b> à aller chercher</div>`;
       }
       return `<div class="lift ${mine ? "crown" : ""} ${rv(4 + i)}" style="--lc:${LC[k]}">
         <div class="body"><div class="lbl">${label}</div>
@@ -173,15 +170,10 @@
           ${frHeld(a)}
           <span class="pill">${sexLabel(a.sex)}</span>
           ${a.last_bw ? `<span class="pill"><i>Poids de corps</i> ${kg(a.last_bw)} kg</span>` : ""}
-          <span class="pill"><i>Dernière compét.</i> ${longDate(a.last_date)}</span>
+          <span class="pill">${a.n_competitions} compétition${a.n_competitions > 1 ? "s" : ""}</span>
         </div>
       </section>
       <div class="lifts">${lifts}</div>
-      <div class="kpis ${rv(7)}">
-        <div class="kpi"><div class="v" data-count="${a.n_competitions}">0</div><div class="l">Compétitions</div></div>
-        <div class="kpi"><div class="v">${a.best_iwf ? `<span data-count="${a.best_iwf}">0</span>` : "—"}</div><div class="l">Meilleur score IWF</div></div>
-        <div class="kpi"><div class="v">${seasons.length}</div><div class="l">Saison${seasons.length > 1 ? "s" : ""} · depuis ${monthYear(a.first_date)}</div></div>
-      </div>
       ${refCard(a)}
       <div class="grid2 ${rv(8)}">
         <div class="card chart draw"><div class="card-h"><h2>Ma progression</h2>
@@ -194,8 +186,7 @@
       ${levelsCard(a)}
       <div class="card ${rv(10)}"><div class="card-h"><h2>Mes compétitions</h2><span class="muted small">${rows.length} au total</span></div>
         ${resultsTable(rows, state.showAll ? rows.length : 10)}
-        ${rows.length > 10 ? `<button class="btn" id="more">${state.showAll ? "Voir moins" : `Voir les ${rows.length} compétitions`}</button>` : ""}
-        <p class="note">🇫🇷 = record de France établi ce jour-là (toujours en cours). 🏆 = record du 95 battu ce jour-là (dans ta catégorie ou une catégorie au-dessus). Les essais barrés en rouge sont ratés.</p></div>`;
+        ${rows.length > 10 ? `<button class="btn" id="more">${state.showAll ? "Voir moins" : `Voir les ${rows.length} compétitions`}</button>` : ""}</div>`;
     $app.querySelectorAll("[data-ref]").forEach((b) => b.addEventListener("click", () => {
       state.ref = b.dataset.ref;
       const y = scrollY; viewAthlete(lic); scrollTo(0, y);
@@ -245,8 +236,7 @@
     return `<div class="card refc ${rv(8)}"><div class="card-h"><h2>Mes records vs référence</h2>
       <div class="seg">${[["95", "Record du 95"], ["fr", "Record de France"]].map(([v, l]) =>
         `<button class="${state.ref === v ? "on" : ""}" data-ref="${v}" ${v === "fr" && !hasFr ? "disabled" : ""}>${l}</button>`).join("")}</div></div>
-      ${rows}
-      <p class="note">${state.ref === "fr" ? `Record de France ${esc(frCat)} ${a.sex} ${esc(a.weight_class || "")} (page records de la Fédé, mise à jour chaque nuit).` : `Record du 95 de ta catégorie ${esc(a.age_cat)} ${a.sex} ${esc(a.weight_class || "")}.`}</p></div>`;
+      ${rows}</div>`;
   }
 
   let CH = null; // géométrie du graphique courant (pour l'info-bulle)
@@ -406,11 +396,11 @@
     const block = (sc) => `<div class="levels">${scales[sc].map((l, i) => {
       const x = reach[sc][i];
       return `<div class="lvl ${x ? "got" : ""} ${i === best[sc] ? "peak" : ""}"><div class="code">${l.codes.map(esc).join("<br>")}</div><div class="name">${esc(l.label)}</div>
-        <div class="when">${x ? `${frDate(x.first)}<br><span class="muted small">${x.count} fois${x.direct ? "" : " (dépassé)"}</span>` : "à venir"}</div></div>`;
+        <div class="when">${x ? frDate(x.first) : ""}</div></div>`;
     }).join("")}</div>`;
     const n = state.showAllSeries ? lines.length : 10;
     const shown = lines.slice().reverse().slice(0, n);
-    return `<div class="card ${rv(9)}"><div class="card-h"><h2>Mes séries FFHM</h2><span class="muted small">en or : ton meilleur niveau</span></div>
+    return `<div class="card ${rv(9)}"><div class="card-h"><h2>Mes séries FFHM</h2></div>
       ${block("ffhm")}
       ${best.masters >= 0 ? `<div class="h3">Séries Masters</div>${block("masters")}` : ""}
       ${lines.length ? `<div class="h3">Ma série à chaque compétition</div><div class="tbl-wrap"><table class="series-tbl">
@@ -419,8 +409,7 @@
           <td class="c-ser"><span class="serie ${m ? "" : "nc"}">${esc(r.series || "—")}</span>${isNew ? `<span class="newlvl">▲ Nouveau niveau</span>` : ""}</td>
           <td class="num tot c-tot" data-l="Total"><b>${r.total || "—"}</b></td><td class="c-cat">${esc(r.age_cat)}</td><td class="comp c-comp">${esc(r.competition)}</td></tr>`).join("")}
       </tbody></table></div>
-      ${lines.length > 10 ? `<button class="btn" id="more-series">${state.showAllSeries ? "Voir moins" : `Voir les ${lines.length} compétitions`}</button>` : ""}` : ""}
-      <p class="note">La série est attribuée par la Fédé selon le total réalisé. Un niveau atteint valide aussi ceux en dessous (« dépassé » = jamais obtenu pile, mais franchi par une série plus haute). Lignes surlignées : premières fois à un niveau plus haut. N.C. = non classé.</p></div>`;
+      ${lines.length > 10 ? `<button class="btn" id="more-series">${state.showAllSeries ? "Voir moins" : `Voir les ${lines.length} compétitions`}</button>` : ""}` : ""}</div>`;
   }
 
   function attempts(arr) {
