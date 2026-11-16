@@ -502,3 +502,13 @@ tr:last-child td { border-bottom: none; }
   .lvl .code { font-size: 16px; }
 }
 @media (max-width: 380px) { .ticker { margin-left: -12px; margin-right: -12px; } .rec-item { padding: 12px; gap: 10px; } .rec-item .big { min-width: 56px; } }
+
+/* meilleur total par saison : barres empilées */
+.stack svg { width: 100%; height: auto; display: block; overflow: visible; }
+.stack .grow { transform-box: fill-box; transform-origin: bottom; transform: scaleY(0); animation: growup .9s var(--ease) forwards; animation-delay: calc(.3s + var(--d)); }
+@keyframes growup { to { transform: scaleY(1); } }
+@media (prefers-reduced-motion: reduce) { .stack .grow { animation: none; transform: none; } }
+.stack .tl { fill: var(--ink); opacity: 0; animation: fadein .4s forwards; animation-delay: calc(1s + var(--d)); }
+.stack .tl.best { fill: var(--gold); }
+.stack .sb { cursor: pointer; transition: opacity .2s; }
+.stack .sb.dim { opacity: .35; }

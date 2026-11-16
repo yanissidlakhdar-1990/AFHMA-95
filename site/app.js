@@ -186,7 +186,9 @@
         <div class="card chart draw"><div class="card-h"><h2>Ma progression</h2>
           <div class="legend"><span><i style="background:var(--snatch)"></i>Arraché</span><span><i style="background:var(--cj)"></i>Épaulé-jeté</span><span><i style="background:var(--total)"></i>Total</span></div></div>
           ${chart(rows.slice().reverse())}</div>
-        <div class="card"><h2>Meilleur total par saison</h2>${seasonBars(a.best_total_by_season)}</div>
+        <div class="card stack"><div class="card-h"><h2>Meilleur total par saison</h2>
+          <div class="legend"><span><i style="background:var(--snatch)"></i>Arraché</span><span><i style="background:var(--cj)"></i>Épaulé-jeté</span></div></div>
+          ${seasonStack(rows)}</div>
       </div>
       ${levelsCard(a)}
       <div class="card ${rv(10)}"><div class="card-h"><h2>Mes compétitions</h2><span class="muted small">${rows.length} au total</span></div>
@@ -203,6 +205,7 @@
     if (more) more.addEventListener("click", () => { state.showAll = !state.showAll; viewAthlete(lic); });
     $app.querySelectorAll(".chart .ln").forEach((p) => p.style.setProperty("--len", Math.ceil(p.getTotalLength())));
     bindChart(rows.slice().reverse());
+    bindStack();
     animate();
   }
 
@@ -317,14 +320,64 @@
     addEventListener("scroll", hide, { passive: true, once: true });
   }
 
-  function seasonBars(obj) {
-    const entries = Object.entries(obj);
-    if (!entries.length) return `<p class="empty">Pas encore de total valide.</p>`;
-    const max = Math.max(...entries.map(([, v]) => v));
-    return `<div class="seasons">${entries.map(([s, v]) => `
-      <div class="season-row ${v === max ? "best" : ""}"><span class="s">${esc(s.replace(/^20(\d\d)\/20(\d\d)$/, "$1/$2"))}</span>
-        <span class="t"><span class="b" data-w="${Math.max(4, (v / max) * 100)}%"></span></span>
-        <span class="n"><span data-count="${v}">0</span> <small class="muted">kg</small></span></div>`).join("")}</div>`;
+  // Barres empilées par saison : arraché + épaulé-jeté de la compétition au meilleur total
+  let ST = null;
+  function seasonStack(rows) {
+    const best = {};
+    rows.forEach((r) => { if (r.total && (!best[r.season] || r.total > best[r.season].total)) best[r.season] = r; });
+    const data = Object.keys(best).sort().map((s) => best[s]);
+    ST = data;
+    if (!data.length) return `<p class="empty">Pas encore de total valide.</p>`;
+    const W = 360, H = 250, L = 30, R = 6, T = 22, B = 24;
+    const max = Math.max(...data.map((r) => r.total));
+    const step = max > 250 ? 100 : max > 120 ? 50 : 20;
+    const hi = Math.ceil((max * 1.08) / step) * step;
+    const y = (v) => T + (1 - v / hi) * (H - T - B);
+    const band = (W - L - R) / data.length, bw = Math.min(40, band * 0.62);
+    const top = Math.max(...data.map((r) => r.total));
+    let g = "";
+    for (let v = 0; v <= hi; v += step)
+      g += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" style="stroke:rgba(var(--fg-rgb),${v ? .06 : .18})"/><text x="${L - 6}" y="${y(v) + 4}" font-size="10" text-anchor="end" style="fill:var(--dim)">${v}</text>`;
+    // segment au coin haut arrondi (4px) ; le bas reste carré, posé sur la ligne de base
+    const seg = (x, y0, y1, round, color) => {
+      const h = y0 - y1; if (h <= 0) return "";
+      const r = round ? Math.min(4, h, bw / 2) : 0;
+      return `<path d="M${x},${y0}V${y1 + r}${r ? `Q${x},${y1} ${x + r},${y1}` : ""}H${x + bw - r}${r ? `Q${x + bw},${y1} ${x + bw},${y1 + r}` : ""}V${y0}Z" style="fill:${color}"/>`;
+    };
+    const bars = data.map((r, i) => {
+      const x = L + band * i + (band - bw) / 2, base = y(0);
+      const sn = r.snatch || 0, cj = r.cj || 0;
+      const ySn = y(sn), yTot = y(sn + cj);
+      return `<g class="sb" data-i="${i}" style="--d:${i * 80}ms">
+        <rect x="${L + band * i}" y="${T}" width="${band}" height="${H - T - B}" fill="transparent"/>
+        <g class="grow">${seg(x, base, ySn, cj <= 0, "var(--snatch)")}${seg(x, ySn - 2, yTot, true, "var(--cj)")}</g>
+        <text x="${x + bw / 2}" y="${yTot - 6}" text-anchor="middle" font-size="12" font-weight="800" class="tl ${r.total === top ? "best" : ""}">${r.total}</text>
+        <text x="${x + bw / 2}" y="${H - 8}" text-anchor="middle" font-size="10" font-weight="600" style="fill:var(--dim)">${esc(r.season.replace(/^20(\d\d)\/20(\d\d)$/, "$1/$2"))}</text></g>`;
+    }).join("");
+    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Meilleur total par saison, arraché et épaulé-jeté empilés">${g}${bars}</svg>`;
+  }
+
+  function bindStack() {
+    const svg = $app.querySelector(".stack svg");
+    if (!svg || !ST) return;
+    const show = (ev, g) => {
+      const r = ST[+g.dataset.i];
+      svg.querySelectorAll(".sb").forEach((x) => x.classList.toggle("dim", x !== g));
+      $tip.innerHTML = `<div class="d">Saison ${esc(r.season)} · ${longDate(r.date)}</div>
+        <div class="r"><span style="color:var(--snatch)">Arraché</span><b>${kg(r.snatch)}</b></div>
+        <div class="r"><span style="color:var(--cj)">Épaulé-jeté</span><b>${kg(r.cj)}</b></div>
+        <div class="r"><span>Total</span><b>${kg(r.total)}</b></div>
+        <div class="c">${esc(r.competition)}</div>`;
+      $tip.hidden = false;
+      const tw = $tip.offsetWidth, th = $tip.offsetHeight, above = ev.clientY - th - 18;
+      $tip.style.left = `${Math.max(8, Math.min(innerWidth - tw - 8, ev.clientX - tw / 2))}px`;
+      $tip.style.top = `${above > 76 ? above : ev.clientY + 22}px`;
+    };
+    svg.querySelectorAll(".sb").forEach((g) => {
+      g.addEventListener("pointermove", (ev) => show(ev, g));
+      g.addEventListener("pointerdown", (ev) => show(ev, g));
+    });
+    svg.addEventListener("pointerleave", () => { $tip.hidden = true; svg.querySelectorAll(".sb").forEach((x) => x.classList.remove("dim")); });
   }
 
   // Séries : un niveau atteint valide aussi tous les niveaux en dessous.
