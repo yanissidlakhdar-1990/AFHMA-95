@@ -100,16 +100,9 @@
 
     $app.innerHTML = `
       <section class="hero">
-        <div class="eyebrow ${rv(0)}">Saison ${esc(season)}</div>
-        <h1 class="${rv(1)}">Trouve<br><span class="out">ta</span> <span class="red">fiche.</span></h1>
+        <h1 class="${rv(1)}">Trouve ta fiche</h1>
         <p class="sub ${rv(2)}">Tes records, ta progression, tes séries et les records du 95 de ta catégorie.</p>
-        <div class="stats ${rv(3)}">
-          <div class="stat"><div class="v" data-count="${D.athletes.length}">0</div><div class="l">Athlètes</div></div>
-          <div class="stat"><div class="v" data-count="${comps}">0</div><div class="l">Compétitions</div></div>
-          <div class="stat"><div class="v" data-count="${recSeason}">0</div><div class="l">Records cette saison</div></div>
-        </div>
       </section>
-      ${last.length ? `<div class="ticker ${rv(4)}"><div class="ticker-track">${tk}${tk}</div></div>` : ""}
       <div class="search ${rv(5)}"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input type="search" id="q" placeholder="Ton nom ou ta licence…" value="${esc(state.q)}" autocomplete="off"></div>
       <div class="chips ${rv(5)}">
@@ -162,16 +155,9 @@
     $app.innerHTML = `
       <a href="#/" class="back ${rv(0)}">← Tous les athlètes</a>
       <section class="ahero">
-        ${a.pb.total ? `<div class="bgnum">${a.pb.total.value}</div>` : ""}
-        <div class="eyebrow ${rv(1)}">${esc(clubShort(a.club))}</div>
-        <h1 class="${rv(2)}">${first ? `<span class="first">${esc(first)}</span>` : ""}${esc(last)}</h1>
-        <div class="meta ${rv(3)}">
-          <span class="pill red">${esc(catTxt)}</span>
-          ${frHeld(a)}
-          <span class="pill">${sexLabel(a.sex)}</span>
-          ${a.last_bw ? `<span class="pill"><i>Poids de corps</i> ${kg(a.last_bw)} kg</span>` : ""}
-          <span class="pill">${a.n_competitions} compétition${a.n_competitions > 1 ? "s" : ""}</span>
-        </div>
+        <h1 class="${rv(1)}">${esc(first)} ${esc(last)}</h1>
+        <p class="aline ${rv(2)}">${sexLabel(a.sex)} · Catégorie <b>${esc(catTxt)}</b>${a.last_bw ? ` (poids de corps ${kg(a.last_bw)} kg)` : ""} · ${esc(clubShort(a.club))} · ${a.n_competitions} compétition${a.n_competitions > 1 ? "s" : ""} · dernière le ${frDate(a.last_date)}</p>
+        ${a.france_held && a.france_held.length ? `<div class="meta ${rv(3)}">${frHeld(a)}</div>` : ""}
       </section>
       <div class="lifts">${lifts}</div>
       ${refCard(a)}
@@ -454,8 +440,7 @@
           <span class="v">${kg(rec.value)}<small> kg</small>${frTag(k)}</span></div>`
       : `<div class="rrow none" style="--lc:${LC[k]}"><span class="k">${SHORT[k]}</span><span class="h">Record à prendre</span><span class="v">—${frTag(k)}</span></div>`;
     $app.innerHTML = `
-      <div class="eyebrow ${rv(0)}">AFHMA · HFC CP95 · WIM Lift</div>
-      <h1 class="${rv(1)}">Records<br><span class="out">du</span> <span class="red">95.</span></h1>
+      <h1 class="${rv(1)}">Records du 95</h1>
       <p class="sub ${rv(2)}">Les meilleures barres du Val d'Oise depuis 2020/21, catégorie par catégorie.</p>
       <div class="${rv(3)}">
         <div class="chips">${periods.map((p) => `<button class="chip ${p === state.recPeriod ? "on" : ""}" data-p="${p}">${esc(D.meta.periods[p])}</button>`).join("")}</div>
@@ -491,8 +476,7 @@
     }
     let n = 0;
     $app.innerHTML = `
-      <div class="eyebrow ${rv(0)}">Les 60 derniers</div>
-      <h1 class="${rv(1)}">Ça <span class="out">vient de</span><br><span class="red">tomber.</span></h1>
+      <h1 class="${rv(1)}">Derniers records</h1>
       <p class="sub ${rv(2)}">Les derniers records du 95 battus, toutes catégories confondues.</p>
       <div class="tl">${days.map((d) => `
         <div class="tl-day ${rv(Math.min(n++, 12) + 3)}">${longDate(d.date)}<small>${esc(d.comp)}</small></div>

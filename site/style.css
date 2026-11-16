@@ -547,3 +547,24 @@ tr:last-child td { border-bottom: none; }
 .hero > .eyebrow { padding-right: 0; }
 @media (max-width: 720px) { .brand .lockup { height: 34px; } .brand-tag { display: none; } }
 @media (max-width: 720px) { .ring .pct small { font-size: 7.5px; letter-spacing: .3px; } }
+
+/* ---------- version épurée façon Excel : même DA, moins d'effets */
+.glow { display: none; }
+h1 { font-size: clamp(34px, 5.5vw, 56px); line-height: 1; letter-spacing: 0; }
+.hero { padding: 8px 0 0; }
+.sub { margin: 10px 0 24px; }
+.ahero { padding: 0 0 20px; }
+.aline { margin: 12px 0 0; font-size: 15px; color: var(--muted); font-style: italic; line-height: 1.5; }
+.aline b { color: var(--ink); font-style: normal; font-weight: 600; }
+.ahero .meta { margin-top: 12px; }
+.lift .val { font-size: 64px; }
+.lift.crown::after { display: none; }
+.count { margin: 4px 0 12px; }
+.card { margin-bottom: 14px; }
+@media (max-width: 720px) {
+  h1 { font-size: 36px; }
+  .lift .val { font-size: 54px; }
+  .aline { font-size: 14px; }
+}
+.alist { grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); }
+.aitem .ainfo .tag { display: none; }
