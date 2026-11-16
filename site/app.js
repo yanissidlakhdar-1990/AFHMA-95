@@ -212,11 +212,11 @@
     const step = (hi - lo) > 150 ? 50 : (hi - lo) > 60 ? 20 : 10;
     let grid = "";
     for (let v = Math.ceil(lo / step) * step; v <= hi; v += step)
-      grid += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="rgba(255,255,255,.06)"/><text x="${L - 8}" y="${y(v) + 4}" font-size="11" text-anchor="end" fill="var(--dim)">${v}</text>`;
+      grid += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" style="stroke:rgba(var(--fg-rgb), .06)"/><text x="${L - 8}" y="${y(v) + 4}" font-size="11" text-anchor="end" style="fill:var(--dim)">${v}</text>`;
     const y0 = new Date(t0).getFullYear(), y1 = new Date(t1).getFullYear();
     for (let yr = y0 + 1; yr <= y1; yr++) {
       const xx = x(`${yr}-01-01`);
-      grid += `<text x="${xx}" y="${H - 6}" font-size="11" font-weight="600" text-anchor="middle" fill="var(--dim)">${yr}</text>`;
+      grid += `<text x="${xx}" y="${H - 6}" font-size="11" font-weight="600" text-anchor="middle" style="fill:var(--dim)">${yr}</text>`;
     }
     const path = (k) => pts.filter((r) => r[k]).map((r, i) => `${i ? "L" : "M"}${x(r.date).toFixed(1)},${y(r[k]).toFixed(1)}`).join("");
     const tp = pts.map((r) => [x(r.date).toFixed(1), y(r.total).toFixed(1)]);
@@ -224,15 +224,15 @@
     const best = pts.reduce((m, r) => (r.total > m.total ? r : m), pts[0]);
     CH = { pts, x, y, W, T, H, B };
     return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Progression">
-      <defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f5c04a" stop-opacity=".28"/><stop offset="1" stop-color="#f5c04a" stop-opacity="0"/></linearGradient></defs>
+      <defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--total)" stop-opacity=".28"/><stop offset="1" style="stop-color:var(--total)" stop-opacity="0"/></linearGradient></defs>
       ${grid}<path class="area" d="${area}" fill="url(#ga)"/>
-      <path class="ln s" d="${path("snatch")}" stroke="var(--snatch)"/>
-      <path class="ln c" d="${path("cj")}" stroke="var(--cj)"/>
-      <path class="ln t" d="${path("total")}" stroke="var(--total)" stroke-width="3.2"/>
-      <g class="pt"><circle cx="${x(best.date)}" cy="${y(best.total)}" r="11" fill="rgba(245,192,74,.18)"/><circle cx="${x(best.date)}" cy="${y(best.total)}" r="5" fill="var(--total)"/>
-        <text x="${Math.min(W - R - 4, x(best.date))}" y="${y(best.total) - 16}" text-anchor="${x(best.date) > W - 60 ? "end" : "middle"}" font-size="13" font-weight="800" fill="var(--total)">${best.total} kg</text></g>
+      <path class="ln s" d="${path("snatch")}" style="stroke:var(--snatch)"/>
+      <path class="ln c" d="${path("cj")}" style="stroke:var(--cj)"/>
+      <path class="ln t" d="${path("total")}" style="stroke:var(--total)" stroke-width="3.2"/>
+      <g class="pt"><circle cx="${x(best.date)}" cy="${y(best.total)}" r="11" style="fill:rgba(var(--gold-rgb), .18)"/><circle cx="${x(best.date)}" cy="${y(best.total)}" r="5" style="fill:var(--total)"/>
+        <text x="${Math.min(W - R - 4, x(best.date))}" y="${y(best.total) - 16}" text-anchor="${x(best.date) > W - 60 ? "end" : "middle"}" font-size="13" font-weight="800" style="fill:var(--total)">${best.total} kg</text></g>
       <line class="hair" id="hair" x1="0" x2="0" y1="${T}" y2="${H - B}" visibility="hidden"/>
-      <g id="hdots" visibility="hidden"><circle r="5" fill="var(--snatch)" stroke="#16161a" stroke-width="2"/><circle r="5" fill="var(--cj)" stroke="#16161a" stroke-width="2"/><circle r="6" fill="var(--total)" stroke="#16161a" stroke-width="2"/></g>
+      <g id="hdots" visibility="hidden"><circle r="5" style="fill:var(--snatch);stroke:var(--card)" stroke-width="2"/><circle r="5" style="fill:var(--cj);stroke:var(--card)" stroke-width="2"/><circle r="6" style="fill:var(--total);stroke:var(--card)" stroke-width="2"/></g>
       <rect id="hit" x="${L}" y="0" width="${W - L - R}" height="${H}" fill="transparent"/></svg>`;
   }
 
@@ -285,7 +285,7 @@
       const top = gotKeys[gotKeys.length - 1];
       return `<div class="levels">${levels.map((l) => {
         const got = a.levels[`${scale}:${l.key}`];
-        return `<div class="lvl ${got ? "got" : ""} ${l.key === top ? "top" : ""}"><div class="code">${esc(l.codes.join(" · "))}</div><div class="name">${esc(l.label)}</div>
+        return `<div class="lvl ${got ? "got" : ""} ${l.key === top ? "peak" : ""}"><div class="code">${esc(l.codes.join(" · "))}</div><div class="name">${esc(l.label)}</div>
           <div class="when">${got ? `${frDate(got.first)}<br><span class="muted small">${got.count} fois</span>` : "à venir"}</div></div>`;
       }).join("")}</div>`;
     };
@@ -399,6 +399,17 @@
     else viewHome();
     window.scrollTo(0, 0);
   }
+
+  // ---------- thème clair / sombre
+  const setThemeColor = () => document.querySelector('meta[name="theme-color"]')
+    .setAttribute("content", document.documentElement.dataset.theme === "light" ? "#1f3354" : "#0b0b0d");
+  setThemeColor();
+  document.getElementById("theme").addEventListener("click", () => {
+    const t = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+    document.documentElement.dataset.theme = t;
+    try { localStorage.setItem("theme", t); } catch (e) {}
+    setThemeColor();
+  });
 
   load().then(() => { window.addEventListener("hashchange", route); route(); })
     .catch((e) => { $app.innerHTML = `<p class="pad center">Impossible de charger les données. Réessaie dans un instant.</p>`; console.error(e); });
