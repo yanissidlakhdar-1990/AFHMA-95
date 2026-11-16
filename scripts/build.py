@@ -5,7 +5,9 @@ Sortie  : site/data/results.json, site/data/athletes.json, site/data/records.jso
 
 Règles (reprises du fichier Excel « Records Val d'Oise ») :
 - catégorie d'âge réelle = année de fin de saison − année de naissance
-  (U13 ≤ 12, U15 13-14, U17 15-17, U20 18-20, Senior 21-34, Masters 35+ par tranches de 5 ans)
+  (U13 ≤ 13, U15 14-15, U17 16-17, U20 18-20, Senior 21+)
+- Masters (35+, par tranches de 5 ans) : seulement pour les athlètes qui ont déjà concouru
+  dans une catégorie Masters (W35, M40…) sur une feuille de match
 - une perf compte dans la catégorie d'âge de l'athlète et dans celles au-dessus :
   U15 → U17, U20, Senior ; U17 → U20, Senior ; U20 → Senior ;
   Masters → leur tranche + Senior ; U13 → U13 uniquement
@@ -14,6 +16,7 @@ Règles (reprises du fichier Excel « Records Val d'Oise ») :
 - seules les perfs avec un total valide comptent pour les records
 """
 import json
+import re
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -122,18 +125,18 @@ def period_of(season_label):
     return "2026-27"
 
 
-def age_category(age, sex):
+def age_category(age, sex, masters=False):
     if age is None:
         return None
-    if age <= 12:
+    if age <= 13:
         return "U13"
-    if age <= 14:
+    if age <= 15:
         return "U15"
     if age <= 17:
         return "U17"
     if age <= 20:
         return "U20"
-    if age < 35:
+    if age < 35 or not masters:
         return "Senior"
     band = 35 + 5 * ((age - 35) // 5)
     return f"{'W' if sex == 'F' else 'M'}{band}"
@@ -186,13 +189,19 @@ def main():
     results = json.loads((RAW / "results.json").read_text(encoding="utf-8"))
     birthdates = json.loads((RAW / "birthdates.json").read_text(encoding="utf-8"))
 
+    # athlètes « Masters » : ont déjà une feuille de match en catégorie Masters
+    masters = {r["licence"] for r in results if re.match(r"^[MW]\d{2}\b", r.get("category") or "")}
+
     # 1. enrichir chaque ligne
     rows = []
     for i, r in enumerate(sorted(results, key=lambda r: (r["date"] or "", r["competition"], r["athlete"]))):
         sex = r.get("sex") or "M"
         bd = birthdates.get(r["licence"])
         age = season_end(r["season"]) - int(bd[:4]) if bd else None
-        cat = age_category(age, sex) or age_cat_from_sheet(r["category"])
+        cat = age_category(age, sex, r["licence"] in masters) or age_cat_from_sheet(r["category"])
+        sheet_m = re.match(r"^([MW]\d{2})\b", r.get("category") or "")
+        if sheet_m:  # tranche Masters indiquée sur la feuille de match : elle fait foi
+            cat = sheet_m.group(1)
         period = period_of(r["season"])
         rows.append({
             "id": i,
@@ -281,7 +290,7 @@ def main():
         sex = last["sex"]
         bd = birthdates.get(lic)
         cur_age = season_end(latest_season) - int(bd[:4]) if bd else None
-        cur_cat = age_category(cur_age, sex) or last["age_cat"]
+        cur_cat = age_category(cur_age, sex, lic in masters) or last["age_cat"]
         last_bw = next((r["bw"] for r in reversed(rs) if r["bw"]), None)
         cur_wc = weight_class(latest_period, sex, cur_cat, last_bw)
         valid = [r for r in rs if r["total"]]
