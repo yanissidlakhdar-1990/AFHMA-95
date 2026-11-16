@@ -406,3 +406,27 @@ tr:last-child td { border-bottom: none; }
 .delta { display: inline-block; font-size: 11.5px; font-weight: 800; padding: 2px 8px; border-radius: 6px; background: var(--ok-soft); color: var(--ok); }
 .delta.new { background: var(--red-soft); color: var(--red2); }
 .liftk { font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 6px; margin-right: 4px; color: var(--lc); background: color-mix(in srgb, var(--lc) 15%, transparent); }
+
+/* ---------- records de France */
+.pill.fr { background: linear-gradient(90deg, rgba(0, 85, 164, .22), rgba(var(--fg-rgb), .04) 50%, rgba(239, 65, 53, .22)); border-color: rgba(var(--gold-rgb), .45); font-weight: 700; }
+.pill.fr i { margin-left: 4px; }
+.badge.fr { background: rgba(0, 85, 164, .14); color: #7fb0ff; border-color: rgba(0, 85, 164, .4); }
+[data-theme="light"] .badge.fr { background: #e6eefb; color: #0055a4; border-color: #b9cdee; }
+.frv { display: block; font-family: var(--body); font-size: 11px; font-weight: 600; color: var(--dim); text-align: right; margin-top: 2px; letter-spacing: 0; }
+
+.refc .seg { margin: 0; }
+.refc .seg button:disabled { opacity: .35; cursor: not-allowed; }
+.ref-row { display: grid; grid-template-columns: 110px 1fr auto; grid-template-areas: "l t v" ". w w"; gap: 4px 14px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); }
+.ref-row:first-of-type { border-top: 0; }
+.ref-row .rl { grid-area: l; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--lc); }
+.ref-row .rt { grid-area: t; position: relative; height: 14px; border-radius: 99px; background: rgba(var(--fg-rgb), .06); overflow: hidden; }
+.ref-row .rb { display: block; height: 100%; width: 0; border-radius: 99px; background: var(--lc); transition: width 1.2s var(--ease); }
+.ref-row.done .rb { background: linear-gradient(90deg, var(--lc), var(--gold)); }
+.ref-row .rv { grid-area: v; font-size: 13px; color: var(--muted); white-space: nowrap; }
+.ref-row .rv b { font-family: var(--display); font-size: 22px; font-weight: 900; color: var(--ink); }
+.ref-row .rv em { font-style: normal; font-weight: 800; color: var(--lc); margin-left: 6px; }
+.ref-row.done .rv em { color: var(--gold); }
+.ref-row .rw { grid-area: w; font-size: 12px; color: var(--dim); }
+@media (max-width: 520px) {
+  .ref-row { grid-template-columns: 1fr auto; grid-template-areas: "l v" "t t" "w w"; }
+}

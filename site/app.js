@@ -169,6 +169,7 @@
         <h1 class="${rv(2)}">${first ? `<span class="first">${esc(first)}</span>` : ""}${esc(last)}</h1>
         <div class="meta ${rv(3)}">
           <span class="pill red">${esc(catTxt)}</span>
+          ${frHeld(a)}
           <span class="pill">${sexLabel(a.sex)}</span>
           ${a.last_bw ? `<span class="pill"><i>Poids de corps</i> ${kg(a.last_bw)} kg</span>` : ""}
           <span class="pill"><i>Dernière compét.</i> ${longDate(a.last_date)}</span>
@@ -180,6 +181,7 @@
         <div class="kpi"><div class="v">${a.best_iwf ? `<span data-count="${a.best_iwf}">0</span>` : "—"}</div><div class="l">Meilleur score IWF</div></div>
         <div class="kpi"><div class="v">${seasons.length}</div><div class="l">Saison${seasons.length > 1 ? "s" : ""} · depuis ${monthYear(a.first_date)}</div></div>
       </div>
+      ${refCard(a)}
       <div class="grid2 ${rv(8)}">
         <div class="card chart draw"><div class="card-h"><h2>Ma progression</h2>
           <div class="legend"><span><i style="background:var(--snatch)"></i>Arraché</span><span><i style="background:var(--cj)"></i>Épaulé-jeté</span><span><i style="background:var(--total)"></i>Total</span></div></div>
@@ -190,12 +192,55 @@
       <div class="card ${rv(10)}"><div class="card-h"><h2>Mes compétitions</h2><span class="muted small">${rows.length} au total</span></div>
         ${resultsTable(rows, state.showAll ? rows.length : 10)}
         ${rows.length > 10 ? `<button class="btn" id="more">${state.showAll ? "Voir moins" : `Voir les ${rows.length} compétitions`}</button>` : ""}
-        <p class="note">🏆 = record du 95 battu ce jour-là (dans ta catégorie ou une catégorie au-dessus). Les essais barrés en rouge sont ratés.</p></div>`;
+        <p class="note">🇫🇷 = record de France établi ce jour-là (toujours en cours). 🏆 = record du 95 battu ce jour-là (dans ta catégorie ou une catégorie au-dessus). Les essais barrés en rouge sont ratés.</p></div>`;
+    $app.querySelectorAll("[data-ref]").forEach((b) => b.addEventListener("click", () => {
+      state.ref = b.dataset.ref;
+      const y = scrollY; viewAthlete(lic); scrollTo(0, y);
+    }));
     const more = $app.querySelector("#more");
     if (more) more.addEventListener("click", () => { state.showAll = !state.showAll; viewAthlete(lic); });
     $app.querySelectorAll(".chart .ln").forEach((p) => p.style.setProperty("--len", Math.ceil(p.getTotalLength())));
     bindChart(rows.slice().reverse());
     animate();
+  }
+
+  // records de France détenus, regroupés par catégorie : « U17 F 61 kg · arraché, épaulé-jeté, total »
+  function frHeld(a) {
+    if (!a.france_held || !a.france_held.length) return "";
+    const short = { snatch: "arraché", cj: "épaulé-jeté", total: "total" };
+    const groups = {};
+    a.france_held.forEach((h) => { (groups[`${h.age_cat} ${h.sex} ${h.weight_class}`] ||= []).push(short[h.lift]); });
+    return Object.entries(groups).map(([cat, l]) => `<span class="pill fr">🇫🇷 Record de France · ${esc(cat)} <i>${l.join(", ")}</i></span>`).join("");
+  }
+
+  // « Mes records vs record de référence » : record du 95 ou record de France de ma catégorie
+  function refCard(a) {
+    const hasFr = LIFTS.some(([k]) => a.record_fr && a.record_fr[k]);
+    if (!state.ref || (state.ref === "fr" && !hasFr)) state.ref = "95";
+    const refOf = (k) => {
+      if (state.ref === "fr") {
+        const r = a.record_fr[k];
+        return r && { value: r.value, who: r.standard ? "minimum Fédé (pas encore battu)" : r.holder, mine: r.mine };
+      }
+      const r = a.record95[k];
+      return r && { value: r.value, who: r.athlete, mine: r.licence === a.licence };
+    };
+    const frCat = hasFr ? LIFTS.map(([k]) => a.record_fr[k]).find(Boolean).age_cat : "";
+    const rows = LIFTS.map(([k, label]) => {
+      const pb = a.pb[k] ? a.pb[k].value : 0, ref = refOf(k);
+      if (!ref) return `<div class="ref-row" style="--lc:${LC[k]}"><span class="rl">${label}</span><span class="rt"></span><span class="rv muted">pas de référence</span></div>`;
+      const pct = Math.round((pb / ref.value) * 100), w = Math.min(100, pct);
+      return `<div class="ref-row ${pct >= 100 ? "done" : ""}" style="--lc:${LC[k]}">
+        <span class="rl">${label}</span>
+        <span class="rt"><span class="rb" data-w="${w}%"></span><span class="rm"></span></span>
+        <span class="rv"><b>${kg(pb)}</b> / ${kg(ref.value)} kg <em>${pct >= 100 ? "✓" : pct + " %"}</em></span>
+        <span class="rw">${ref.mine ? "C'est toi qui le détiens 🏆" : `Record : ${esc(ref.who || "")}${pct < 100 ? ` · encore ${kg(+(ref.value - pb).toFixed(1))} kg` : ""}`}</span></div>`;
+    }).join("");
+    return `<div class="card refc ${rv(8)}"><div class="card-h"><h2>Mes records vs référence</h2>
+      <div class="seg">${[["95", "Record du 95"], ["fr", "Record de France"]].map(([v, l]) =>
+        `<button class="${state.ref === v ? "on" : ""}" data-ref="${v}" ${v === "fr" && !hasFr ? "disabled" : ""}>${l}</button>`).join("")}</div></div>
+      ${rows}
+      <p class="note">${state.ref === "fr" ? `Record de France ${esc(frCat)} ${a.sex} ${esc(a.weight_class || "")} (page records de la Fédé, mise à jour chaque nuit).` : `Record du 95 de ta catégorie ${esc(a.age_cat)} ${a.sex} ${esc(a.weight_class || "")}.`}</p></div>`;
   }
 
   let CH = null; // géométrie du graphique courant (pour l'info-bulle)
@@ -312,6 +357,7 @@
       ${rows.slice(0, n).map((r) => `<tr>
         <td class="num" style="text-align:left">${frDate(r.date)}</td>
         <td class="comp">${r.competition_url ? `<a href="${esc(r.competition_url)}" target="_blank" rel="noopener">${esc(r.competition)}</a>` : esc(r.competition)}
+          ${r.france && r.france.length ? `<br><span class="badge fr" title="${esc(r.france.join(" · "))}">🇫🇷 Record de France · ${esc(r.france[0])}${r.france.length > 1 ? ` +${r.france.length - 1}` : ""}</span>` : ""}
           ${r.records.length ? `<br><span class="badge" title="${esc(r.records.join(" · "))}">🏆 Record 95 · ${esc(r.records[0])}${r.records.length > 1 ? ` +${r.records.length - 1}` : ""}</span>` : ""}</td>
         <td>${esc(r.age_cat)}<br><span class="muted small">${esc(r.weight_class || "")}</span></td>
         <td class="num muted">${kg(r.bw)}</td>
@@ -331,11 +377,16 @@
     const ages = [...new Set(inPeriod.map((r) => r.age_cat))].sort((a, b) => ageSort(a) - ageSort(b));
     if (!ages.includes(state.recAge)) state.recAge = "Senior";
     const list = inPeriod.filter((r) => r.age_cat === state.recAge);
+    const frIdx = {};
+    if (state.recPeriod === D.meta.latest_period) (D.records.france || []).forEach((f) => { frIdx[`${f.age_cat}|${f.sex}|${f.weight_class}|${f.lift}`] = f; });
+    const frAge = AGE_ORDER.includes(state.recAge) ? (state.recAge === "U13" ? null : state.recAge) : "Senior";
+    let curWc = "";
+    const frTag = (k) => { const f = frAge && frIdx[`${frAge}|${state.recSex}|${curWc}|${k}`]; return f ? `<span class="frv" title="Record de France ${esc(frAge)}${f.standard ? " (minimum Fédé)" : " · " + esc(f.holder)}">🇫🇷 ${kg(f.value)}</span>` : ""; };
     const row = (k, rec) => rec
       ? `<div class="rrow" style="--lc:${LC[k]}"><span class="k">${SHORT[k]}</span>
           <span class="h">${athleteLink(rec.licence, rec.athlete)}<span>${frDate(rec.date)} · ${esc(clubShort(rec.club))}</span></span>
-          <span class="v">${kg(rec.value)}<small> kg</small></span></div>`
-      : `<div class="rrow none" style="--lc:${LC[k]}"><span class="k">${SHORT[k]}</span><span class="h">Record à prendre</span><span class="v">—</span></div>`;
+          <span class="v">${kg(rec.value)}<small> kg</small>${frTag(k)}</span></div>`
+      : `<div class="rrow none" style="--lc:${LC[k]}"><span class="k">${SHORT[k]}</span><span class="h">Record à prendre</span><span class="v">—${frTag(k)}</span></div>`;
     $app.innerHTML = `
       <div class="eyebrow ${rv(0)}">AFHMA · HFC CP95 · WIM Lift</div>
       <h1 class="${rv(1)}">Records<br><span class="out">du</span> <span class="red">95.</span></h1>
@@ -346,7 +397,7 @@
         <div class="chips">${ages.map((a) => `<button class="chip ${a === state.recAge ? "on" : ""}" data-a="${a}">${a}</button>`).join("")}</div>
       </div>
       <div class="rgrid">
-        ${list.map((r, i) => `<div class="rcard ${rv(4 + Math.min(i, 10))}">
+        ${list.map((r, i) => `${(curWc = r.weight_class, "")}<div class="rcard ${rv(4 + Math.min(i, 10))}">
           <div class="rcard-h"><span class="w">${esc(r.weight_class.replace(" kg", ""))}<small>kg</small></span>
             ${r.total ? `<span class="t"><b>${kg(r.total.value)}</b><span>kg au total</span></span>` : ""}</div>
           ${row("snatch", r.snatch)}${row("cj", r.cj)}${row("total", r.total)}</div>`).join("") || `<p class="empty">Aucune catégorie.</p>`}
@@ -354,7 +405,8 @@
       <details class="rules"><summary>Comment sont calculés ces records ?</summary>
         <p>Calculés sur les résultats de l'AFHMA Franconville, du HFC CP95 Cergy et de WIM LIFT depuis 2020/21.
         Une perf compte dans la catégorie d'âge de l'athlète et dans celles au-dessus (U15 → U17, U20, Senior ; Masters → leur tranche + Senior ; U13 → U13 uniquement).
-        Catégorie de poids recalculée d'après le poids de corps. Seules les perfs avec un total valide comptent.</p></details>`;
+        Catégorie de poids recalculée d'après le poids de corps. Seules les perfs avec un total valide comptent.
+        🇫🇷 = record de France en cours de la catégorie (U15 à Senior ; les Masters sont comparés au record Senior), d'après la page records de la Fédé.</p></details>`;
     $app.querySelectorAll("[data-p]").forEach((b) => b.addEventListener("click", () => { state.recPeriod = b.dataset.p; viewRecords(); }));
     $app.querySelectorAll("[data-s]").forEach((b) => b.addEventListener("click", () => { state.recSex = b.dataset.s; viewRecords(); }));
     $app.querySelectorAll("[data-a]").forEach((b) => b.addEventListener("click", () => { state.recAge = b.dataset.a; viewRecords(); }));

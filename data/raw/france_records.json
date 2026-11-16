@@ -1,0 +1,1952 @@
+[
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "49 kg",
+"lift": "snatch",
+"value": 62,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "49 kg",
+"lift": "cj",
+"value": 78,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "49 kg",
+"lift": "total",
+"value": 140,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "53 kg",
+"lift": "snatch",
+"value": 80,
+"standard": false,
+"holder": "RIGAUD Garance",
+"holder_id": "8172"
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "53 kg",
+"lift": "cj",
+"value": 104,
+"standard": false,
+"holder": "RIGAUD Garance",
+"holder_id": "8172"
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "53 kg",
+"lift": "total",
+"value": 184,
+"standard": false,
+"holder": "RIGAUD Garance",
+"holder_id": "8172"
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "57 kg",
+"lift": "snatch",
+"value": 83,
+"standard": false,
+"holder": "RIGAUD Garance",
+"holder_id": "8172"
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "57 kg",
+"lift": "cj",
+"value": 105,
+"standard": false,
+"holder": "RIGAUD Garance",
+"holder_id": "8172"
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "57 kg",
+"lift": "total",
+"value": 184,
+"standard": false,
+"holder": "RIGAUD Garance",
+"holder_id": "8172"
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "61 kg",
+"lift": "snatch",
+"value": 102,
+"standard": false,
+"holder": "MICHEL Maelyn",
+"holder_id": "8226"
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "61 kg",
+"lift": "cj",
+"value": 118,
+"standard": false,
+"holder": "MICHEL Maelyn",
+"holder_id": "8226"
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "61 kg",
+"lift": "total",
+"value": 220,
+"standard": false,
+"holder": "MICHEL Maelyn",
+"holder_id": "8226"
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "69 kg",
+"lift": "snatch",
+"value": 96,
+"standard": false,
+"holder": "FAUVEL Laurène",
+"holder_id": "8243"
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "69 kg",
+"lift": "cj",
+"value": 121,
+"standard": false,
+"holder": "FAUVEL Laurène",
+"holder_id": "8243"
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "69 kg",
+"lift": "total",
+"value": 216,
+"standard": false,
+"holder": "FAUVEL Laurène",
+"holder_id": "8243"
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "77 kg",
+"lift": "snatch",
+"value": 95,
+"standard": false,
+"holder": "ASSAH Morgane",
+"holder_id": "9630"
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "77 kg",
+"lift": "cj",
+"value": 119,
+"standard": false,
+"holder": "IAFRATE Sara",
+"holder_id": "11201"
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "77 kg",
+"lift": "total",
+"value": 210,
+"standard": false,
+"holder": "IAFRATE Sara",
+"holder_id": "11201"
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "86 kg",
+"lift": "snatch",
+"value": 107,
+"standard": false,
+"holder": "FEGUE Marie josephe",
+"holder_id": "11628"
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "86 kg",
+"lift": "cj",
+"value": 136,
+"standard": false,
+"holder": "FEGUE Marie josephe",
+"holder_id": "11628"
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "86 kg",
+"lift": "total",
+"value": 243,
+"standard": false,
+"holder": "FEGUE Marie josephe",
+"holder_id": "11628"
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "+86 kg",
+"lift": "snatch",
+"value": 92,
+"standard": false,
+"holder": "CREGUT DUPONT Léa",
+"holder_id": "7965"
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "+86 kg",
+"lift": "cj",
+"value": 112,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "Senior",
+"sex": "F",
+"weight_class": "+86 kg",
+"lift": "total",
+"value": 201,
+"standard": false,
+"holder": "CREGUT DUPONT Léa",
+"holder_id": "7965"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "60 kg",
+"lift": "snatch",
+"value": 108,
+"standard": false,
+"holder": "DELAMOTTE Lukas",
+"holder_id": "7496"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "60 kg",
+"lift": "cj",
+"value": 130,
+"standard": false,
+"holder": "GAUTIER Lucas",
+"holder_id": "12860"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "60 kg",
+"lift": "total",
+"value": 234,
+"standard": false,
+"holder": "GAUTIER Lucas",
+"holder_id": "12860"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "65 kg",
+"lift": "snatch",
+"value": 132,
+"standard": false,
+"holder": "KINGUE MATAM Bernardin",
+"holder_id": "8269"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "65 kg",
+"lift": "cj",
+"value": 158,
+"standard": false,
+"holder": "KINGUE MATAM Bernardin",
+"holder_id": "8269"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "65 kg",
+"lift": "total",
+"value": 290,
+"standard": false,
+"holder": "KINGUE MATAM Bernardin",
+"holder_id": "8269"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "70 kg",
+"lift": "snatch",
+"value": 129,
+"standard": false,
+"holder": "KINGUE MATAM Bernardin",
+"holder_id": "8269"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "70 kg",
+"lift": "cj",
+"value": 168,
+"standard": false,
+"holder": "KINGUE MATAM Bernardin",
+"holder_id": "8269"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "70 kg",
+"lift": "total",
+"value": 295,
+"standard": false,
+"holder": "KINGUE MATAM Bernardin",
+"holder_id": "8269"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "75 kg",
+"lift": "snatch",
+"value": 138,
+"standard": false,
+"holder": "CHRISTOPHEL Valentin",
+"holder_id": "7936"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "75 kg",
+"lift": "cj",
+"value": 164,
+"standard": false,
+"holder": "CHRISTOPHEL Valentin",
+"holder_id": "7936"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "75 kg",
+"lift": "total",
+"value": 302,
+"standard": false,
+"holder": "CHRISTOPHEL Valentin",
+"holder_id": "7936"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "85 kg",
+"lift": "snatch",
+"value": 140,
+"standard": false,
+"holder": "PERSONNIC Youenn",
+"holder_id": "9872"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "85 kg",
+"lift": "cj",
+"value": 170,
+"standard": false,
+"holder": "PERSONNIC Youenn",
+"holder_id": "9872"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "85 kg",
+"lift": "total",
+"value": 310,
+"standard": false,
+"holder": "PERSONNIC Youenn",
+"holder_id": "9872"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "95 kg",
+"lift": "snatch",
+"value": 155,
+"standard": false,
+"holder": "IMADOUCHENE Romain",
+"holder_id": "11630"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "95 kg",
+"lift": "cj",
+"value": 200,
+"standard": false,
+"holder": "IMADOUCHENE Romain",
+"holder_id": "11630"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "95 kg",
+"lift": "total",
+"value": 355,
+"standard": false,
+"holder": "IMADOUCHENE Romain",
+"holder_id": "11630"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "110 kg",
+"lift": "snatch",
+"value": 165,
+"standard": false,
+"holder": "FERRE Benjamin",
+"holder_id": "8239"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "110 kg",
+"lift": "cj",
+"value": 208,
+"standard": false,
+"holder": "FERRE Benjamin",
+"holder_id": "8239"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "110 kg",
+"lift": "total",
+"value": 372,
+"standard": false,
+"holder": "FERRE Benjamin",
+"holder_id": "8239"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "+110 kg",
+"lift": "snatch",
+"value": 163,
+"standard": false,
+"holder": "FERRE Benjamin",
+"holder_id": "8239"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "+110 kg",
+"lift": "cj",
+"value": 211,
+"standard": false,
+"holder": "FERRE Benjamin",
+"holder_id": "8239"
+},
+{
+"age_cat": "Senior",
+"sex": "M",
+"weight_class": "+110 kg",
+"lift": "total",
+"value": 374,
+"standard": false,
+"holder": "FERRE Benjamin",
+"holder_id": "8239"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "49 kg",
+"lift": "snatch",
+"value": 60,
+"standard": false,
+"holder": "BIZEAU Alexine",
+"holder_id": "7806"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "49 kg",
+"lift": "cj",
+"value": 74,
+"standard": false,
+"holder": "ALCARAZ Charlotte",
+"holder_id": "11292"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "49 kg",
+"lift": "total",
+"value": 133,
+"standard": false,
+"holder": "ALCARAZ Charlotte",
+"holder_id": "11292"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "53 kg",
+"lift": "snatch",
+"value": 70,
+"standard": false,
+"holder": "CORGIAT BONDON Maelys",
+"holder_id": "12867"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "53 kg",
+"lift": "cj",
+"value": 87,
+"standard": false,
+"holder": "CORGIAT BONDON Maelys",
+"holder_id": "12867"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "53 kg",
+"lift": "total",
+"value": 157,
+"standard": false,
+"holder": "CORGIAT BONDON Maelys",
+"holder_id": "12867"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "57 kg",
+"lift": "snatch",
+"value": 82,
+"standard": false,
+"holder": "DEGEZ Florette",
+"holder_id": "9706"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "57 kg",
+"lift": "cj",
+"value": 94,
+"standard": false,
+"holder": "DEGEZ Florette",
+"holder_id": "9706"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "57 kg",
+"lift": "total",
+"value": 176,
+"standard": false,
+"holder": "DEGEZ Florette",
+"holder_id": "9706"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "61 kg",
+"lift": "snatch",
+"value": 88,
+"standard": false,
+"holder": "DEROULEDE Lili-gabrielle",
+"holder_id": "8237"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "61 kg",
+"lift": "cj",
+"value": 100,
+"standard": false,
+"holder": "DEROULEDE Lili-gabrielle",
+"holder_id": "8237"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "61 kg",
+"lift": "total",
+"value": 188,
+"standard": false,
+"holder": "DEROULEDE Lili-gabrielle",
+"holder_id": "8237"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "69 kg",
+"lift": "snatch",
+"value": 92,
+"standard": false,
+"holder": "IAFRATE Sara",
+"holder_id": "11201"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "69 kg",
+"lift": "cj",
+"value": 115,
+"standard": false,
+"holder": "IAFRATE Sara",
+"holder_id": "11201"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "69 kg",
+"lift": "total",
+"value": 207,
+"standard": false,
+"holder": "IAFRATE Sara",
+"holder_id": "11201"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "77 kg",
+"lift": "snatch",
+"value": 91,
+"standard": false,
+"holder": "IAFRATE Sara",
+"holder_id": "11201"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "77 kg",
+"lift": "cj",
+"value": 119,
+"standard": false,
+"holder": "IAFRATE Sara",
+"holder_id": "11201"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "77 kg",
+"lift": "total",
+"value": 210,
+"standard": false,
+"holder": "IAFRATE Sara",
+"holder_id": "11201"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "86 kg",
+"lift": "snatch",
+"value": 88,
+"standard": false,
+"holder": "FURET Zoé",
+"holder_id": "9897"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "86 kg",
+"lift": "cj",
+"value": 103,
+"standard": false,
+"holder": "FURET Zoé",
+"holder_id": "9897"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "86 kg",
+"lift": "total",
+"value": 190,
+"standard": false,
+"holder": "FURET Zoé",
+"holder_id": "9897"
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "+86 kg",
+"lift": "snatch",
+"value": 83,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "+86 kg",
+"lift": "cj",
+"value": 105,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U20",
+"sex": "F",
+"weight_class": "+86 kg",
+"lift": "total",
+"value": 188,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "60 kg",
+"lift": "snatch",
+"value": 108,
+"standard": false,
+"holder": "DELAMOTTE Lukas",
+"holder_id": "7496"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "60 kg",
+"lift": "cj",
+"value": 130,
+"standard": false,
+"holder": "GAUTIER Lucas",
+"holder_id": "12860"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "60 kg",
+"lift": "total",
+"value": 234,
+"standard": false,
+"holder": "GAUTIER Lucas",
+"holder_id": "12860"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "65 kg",
+"lift": "snatch",
+"value": 110,
+"standard": false,
+"holder": "GAUTIER Lucas",
+"holder_id": "12860"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "65 kg",
+"lift": "cj",
+"value": 126,
+"standard": false,
+"holder": "ROSSI Alexis",
+"holder_id": "11140"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "65 kg",
+"lift": "total",
+"value": 235,
+"standard": false,
+"holder": "GAUTIER Lucas",
+"holder_id": "12860"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "70 kg",
+"lift": "snatch",
+"value": 119,
+"standard": false,
+"holder": "MARTIN Gabriel",
+"holder_id": "8766"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "70 kg",
+"lift": "cj",
+"value": 130,
+"standard": false,
+"holder": "ROSSI Alexis",
+"holder_id": "11140"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "70 kg",
+"lift": "total",
+"value": 235,
+"standard": false,
+"holder": "ROSSI Alexis",
+"holder_id": "11140"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "75 kg",
+"lift": "snatch",
+"value": 120,
+"standard": false,
+"holder": "MARTIN Gabriel",
+"holder_id": "8766"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "75 kg",
+"lift": "cj",
+"value": 145,
+"standard": false,
+"holder": "MARTIN Gabriel",
+"holder_id": "8766"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "75 kg",
+"lift": "total",
+"value": 265,
+"standard": false,
+"holder": "MARTIN Gabriel",
+"holder_id": "8766"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "85 kg",
+"lift": "snatch",
+"value": 138,
+"standard": false,
+"holder": "IAFRATE Adam",
+"holder_id": "8080"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "85 kg",
+"lift": "cj",
+"value": 145,
+"standard": false,
+"holder": "IAFRATE Adam",
+"holder_id": "8080"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "85 kg",
+"lift": "total",
+"value": 283,
+"standard": false,
+"holder": "IAFRATE Adam",
+"holder_id": "8080"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "95 kg",
+"lift": "snatch",
+"value": 125,
+"standard": false,
+"holder": "COTTE-GAUDIN Simon",
+"holder_id": "7754"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "95 kg",
+"lift": "cj",
+"value": 152,
+"standard": false,
+"holder": "COTTE-GAUDIN Simon",
+"holder_id": "7754"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "95 kg",
+"lift": "total",
+"value": 277,
+"standard": false,
+"holder": "COTTE-GAUDIN Simon",
+"holder_id": "7754"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "110 kg",
+"lift": "snatch",
+"value": 155,
+"standard": false,
+"holder": "LE PIOLET Manoa",
+"holder_id": "11255"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "110 kg",
+"lift": "cj",
+"value": 188,
+"standard": false,
+"holder": "LE PIOLET Manoa",
+"holder_id": "11255"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "110 kg",
+"lift": "total",
+"value": 343,
+"standard": false,
+"holder": "LE PIOLET Manoa",
+"holder_id": "11255"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "+110 kg",
+"lift": "snatch",
+"value": 152,
+"standard": false,
+"holder": "LE PIOLET Manoa",
+"holder_id": "11255"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "+110 kg",
+"lift": "cj",
+"value": 178,
+"standard": false,
+"holder": "LE PIOLET Manoa",
+"holder_id": "11255"
+},
+{
+"age_cat": "U20",
+"sex": "M",
+"weight_class": "+110 kg",
+"lift": "total",
+"value": 330,
+"standard": false,
+"holder": "LE PIOLET Manoa",
+"holder_id": "11255"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "45 kg",
+"lift": "snatch",
+"value": 52,
+"standard": false,
+"holder": "BARET Lola",
+"holder_id": "13615"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "45 kg",
+"lift": "cj",
+"value": 61,
+"standard": false,
+"holder": "DECRAENE Selenia",
+"holder_id": "9903"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "45 kg",
+"lift": "total",
+"value": 112,
+"standard": false,
+"holder": "DECRAENE Selenia",
+"holder_id": "9903"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "49 kg",
+"lift": "snatch",
+"value": 59,
+"standard": false,
+"holder": "ALCARAZ Charlotte",
+"holder_id": "11292"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "49 kg",
+"lift": "cj",
+"value": 74,
+"standard": false,
+"holder": "ALCARAZ Charlotte",
+"holder_id": "11292"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "49 kg",
+"lift": "total",
+"value": 133,
+"standard": false,
+"holder": "ALCARAZ Charlotte",
+"holder_id": "11292"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "53 kg",
+"lift": "snatch",
+"value": 70,
+"standard": false,
+"holder": "CORGIAT BONDON Maelys",
+"holder_id": "12867"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "53 kg",
+"lift": "cj",
+"value": 87,
+"standard": false,
+"holder": "CORGIAT BONDON Maelys",
+"holder_id": "12867"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "53 kg",
+"lift": "total",
+"value": 157,
+"standard": false,
+"holder": "CORGIAT BONDON Maelys",
+"holder_id": "12867"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "57 kg",
+"lift": "snatch",
+"value": 61,
+"standard": false,
+"holder": "DURIC Ema",
+"holder_id": "10245"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "57 kg",
+"lift": "cj",
+"value": 80,
+"standard": false,
+"holder": "RICHEVAUX Jade",
+"holder_id": "9619"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "57 kg",
+"lift": "total",
+"value": 140,
+"standard": false,
+"holder": "DURIC Ema",
+"holder_id": "10245"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "61 kg",
+"lift": "snatch",
+"value": 68,
+"standard": false,
+"holder": "RICHEVAUX Jade",
+"holder_id": "9619"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "61 kg",
+"lift": "cj",
+"value": 83,
+"standard": false,
+"holder": "RICHEVAUX Jade",
+"holder_id": "9619"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "61 kg",
+"lift": "total",
+"value": 150,
+"standard": false,
+"holder": "RICHEVAUX Jade",
+"holder_id": "9619"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "69 kg",
+"lift": "snatch",
+"value": 76,
+"standard": false,
+"holder": "KUSS--BILDSTEIN Irene",
+"holder_id": "9137"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "69 kg",
+"lift": "cj",
+"value": 90,
+"standard": false,
+"holder": "COPPIN Ilona",
+"holder_id": "13664"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "69 kg",
+"lift": "total",
+"value": 161,
+"standard": false,
+"holder": "COPPIN Ilona",
+"holder_id": "13664"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "77 kg",
+"lift": "snatch",
+"value": 75,
+"standard": false,
+"holder": "ROUY Ilona",
+"holder_id": "8190"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "77 kg",
+"lift": "cj",
+"value": 94,
+"standard": false,
+"holder": "ROUY Ilona",
+"holder_id": "8190"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "77 kg",
+"lift": "total",
+"value": 169,
+"standard": false,
+"holder": "ROUY Ilona",
+"holder_id": "8190"
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "+77 kg",
+"lift": "snatch",
+"value": 70,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "+77 kg",
+"lift": "cj",
+"value": 88,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U17",
+"sex": "F",
+"weight_class": "+77 kg",
+"lift": "total",
+"value": 158,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "55 kg",
+"lift": "snatch",
+"value": 70,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "55 kg",
+"lift": "cj",
+"value": 88,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "55 kg",
+"lift": "total",
+"value": 158,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "60 kg",
+"lift": "snatch",
+"value": 95,
+"standard": false,
+"holder": "GAUTIER Lucas",
+"holder_id": "12860"
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "60 kg",
+"lift": "cj",
+"value": 115,
+"standard": false,
+"holder": "GAUTIER Lucas",
+"holder_id": "12860"
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "60 kg",
+"lift": "total",
+"value": 210,
+"standard": false,
+"holder": "GAUTIER Lucas",
+"holder_id": "12860"
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "65 kg",
+"lift": "snatch",
+"value": 94,
+"standard": false,
+"holder": "IAFRATE Ismael",
+"holder_id": "8328"
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "65 kg",
+"lift": "cj",
+"value": 125,
+"standard": false,
+"holder": "ALCARAZ Thomas",
+"holder_id": "11293"
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "65 kg",
+"lift": "total",
+"value": 216,
+"standard": false,
+"holder": "ALCARAZ Thomas",
+"holder_id": "11293"
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "70 kg",
+"lift": "snatch",
+"value": 95,
+"standard": false,
+"holder": "MUGNIERY-SIRIEX Louis",
+"holder_id": "9692"
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "70 kg",
+"lift": "cj",
+"value": 121,
+"standard": false,
+"holder": "MUGNIERY-SIRIEX Louis",
+"holder_id": "9692"
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "70 kg",
+"lift": "total",
+"value": 216,
+"standard": false,
+"holder": "MUGNIERY-SIRIEX Louis",
+"holder_id": "9692"
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "75 kg",
+"lift": "snatch",
+"value": 102,
+"standard": false,
+"holder": "AOUNI Maxence",
+"holder_id": "7627"
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "75 kg",
+"lift": "cj",
+"value": 125,
+"standard": false,
+"holder": "AOUNI Maxence",
+"holder_id": "7627"
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "75 kg",
+"lift": "total",
+"value": 227,
+"standard": false,
+"holder": "AOUNI Maxence",
+"holder_id": "7627"
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "85 kg",
+"lift": "snatch",
+"value": 97,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "85 kg",
+"lift": "cj",
+"value": 123,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "85 kg",
+"lift": "total",
+"value": 220,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "95 kg",
+"lift": "snatch",
+"value": 120,
+"standard": false,
+"holder": "PASTOR Romain",
+"holder_id": "9756"
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "95 kg",
+"lift": "cj",
+"value": 152,
+"standard": false,
+"holder": "PASTOR Romain",
+"holder_id": "9756"
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "95 kg",
+"lift": "total",
+"value": 272,
+"standard": false,
+"holder": "PASTOR Romain",
+"holder_id": "9756"
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "+95 kg",
+"lift": "snatch",
+"value": 110,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "+95 kg",
+"lift": "cj",
+"value": 139,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U17",
+"sex": "M",
+"weight_class": "+95 kg",
+"lift": "total",
+"value": 249,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "41 kg",
+"lift": "snatch",
+"value": 34,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "41 kg",
+"lift": "cj",
+"value": 43,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "41 kg",
+"lift": "total",
+"value": 77,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "45 kg",
+"lift": "snatch",
+"value": 38,
+"standard": false,
+"holder": "AKOUH Assia",
+"holder_id": "14183"
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "45 kg",
+"lift": "cj",
+"value": 51,
+"standard": false,
+"holder": "AKOUH Assia",
+"holder_id": "14183"
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "45 kg",
+"lift": "total",
+"value": 89,
+"standard": false,
+"holder": "AKOUH Assia",
+"holder_id": "14183"
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "49 kg",
+"lift": "snatch",
+"value": 50,
+"standard": false,
+"holder": "LITZLER Luna",
+"holder_id": "8761"
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "49 kg",
+"lift": "cj",
+"value": 65,
+"standard": false,
+"holder": "LITZLER Luna",
+"holder_id": "8761"
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "49 kg",
+"lift": "total",
+"value": 115,
+"standard": false,
+"holder": "LITZLER Luna",
+"holder_id": "8761"
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "53 kg",
+"lift": "snatch",
+"value": 65,
+"standard": false,
+"holder": "SESMA Tifanie",
+"holder_id": "8986"
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "53 kg",
+"lift": "cj",
+"value": 78,
+"standard": false,
+"holder": "SESMA Tifanie",
+"holder_id": "8986"
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "53 kg",
+"lift": "total",
+"value": 143,
+"standard": false,
+"holder": "SESMA Tifanie",
+"holder_id": "8986"
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "57 kg",
+"lift": "snatch",
+"value": 64,
+"standard": false,
+"holder": "DURIC Ema",
+"holder_id": "10245"
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "57 kg",
+"lift": "cj",
+"value": 76,
+"standard": false,
+"holder": "DURIC Ema",
+"holder_id": "10245"
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "57 kg",
+"lift": "total",
+"value": 140,
+"standard": false,
+"holder": "DURIC Ema",
+"holder_id": "10245"
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "61 kg",
+"lift": "snatch",
+"value": 62,
+"standard": false,
+"holder": "AMELINE Inès",
+"holder_id": "9429"
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "61 kg",
+"lift": "cj",
+"value": 77,
+"standard": false,
+"holder": "AMELINE Inès",
+"holder_id": "9429"
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "61 kg",
+"lift": "total",
+"value": 139,
+"standard": false,
+"holder": "AMELINE Inès",
+"holder_id": "9429"
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "69 kg",
+"lift": "snatch",
+"value": 71,
+"standard": false,
+"holder": "COPPIN Ilona",
+"holder_id": "13664"
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "69 kg",
+"lift": "cj",
+"value": 90,
+"standard": false,
+"holder": "COPPIN Ilona",
+"holder_id": "13664"
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "69 kg",
+"lift": "total",
+"value": 161,
+"standard": false,
+"holder": "COPPIN Ilona",
+"holder_id": "13664"
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "+69 kg",
+"lift": "snatch",
+"value": 63,
+"standard": false,
+"holder": "FONTENELLE Chloe",
+"holder_id": "7863"
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "+69 kg",
+"lift": "cj",
+"value": 81,
+"standard": false,
+"holder": "FONTENELLE Chloe",
+"holder_id": "7863"
+},
+{
+"age_cat": "U15",
+"sex": "F",
+"weight_class": "+69 kg",
+"lift": "total",
+"value": 141,
+"standard": false,
+"holder": "FONTENELLE Chloe",
+"holder_id": "7863"
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "45 kg",
+"lift": "snatch",
+"value": 53,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "45 kg",
+"lift": "cj",
+"value": 68,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "45 kg",
+"lift": "total",
+"value": 121,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "51 kg",
+"lift": "snatch",
+"value": 53,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "51 kg",
+"lift": "cj",
+"value": 68,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "51 kg",
+"lift": "total",
+"value": 121,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "55 kg",
+"lift": "snatch",
+"value": 59,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "55 kg",
+"lift": "cj",
+"value": 75,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "55 kg",
+"lift": "total",
+"value": 134,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "60 kg",
+"lift": "snatch",
+"value": 71,
+"standard": false,
+"holder": "BOUKHARTA Zakaria",
+"holder_id": "10130"
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "60 kg",
+"lift": "cj",
+"value": 83,
+"standard": false,
+"holder": "BOUKHARTA Zakaria",
+"holder_id": "10130"
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "60 kg",
+"lift": "total",
+"value": 154,
+"standard": false,
+"holder": "BOUKHARTA Zakaria",
+"holder_id": "10130"
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "65 kg",
+"lift": "snatch",
+"value": 94,
+"standard": false,
+"holder": "IAFRATE Ismael",
+"holder_id": "8328"
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "65 kg",
+"lift": "cj",
+"value": 125,
+"standard": false,
+"holder": "ALCARAZ Thomas",
+"holder_id": "11293"
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "65 kg",
+"lift": "total",
+"value": 216,
+"standard": false,
+"holder": "ALCARAZ Thomas",
+"holder_id": "11293"
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "70 kg",
+"lift": "snatch",
+"value": 87,
+"standard": false,
+"holder": "ECKMANN Gael",
+"holder_id": "9759"
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "70 kg",
+"lift": "cj",
+"value": 104,
+"standard": false,
+"holder": "ECKMANN Gael",
+"holder_id": "9759"
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "70 kg",
+"lift": "total",
+"value": 191,
+"standard": false,
+"holder": "ECKMANN Gael",
+"holder_id": "9759"
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "75 kg",
+"lift": "snatch",
+"value": 77,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "75 kg",
+"lift": "cj",
+"value": 97,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "75 kg",
+"lift": "total",
+"value": 174,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "85 kg",
+"lift": "snatch",
+"value": 82,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "85 kg",
+"lift": "cj",
+"value": 104,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "85 kg",
+"lift": "total",
+"value": 186,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "+85 kg",
+"lift": "snatch",
+"value": 95,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "+85 kg",
+"lift": "cj",
+"value": 122,
+"standard": true,
+"holder": null,
+"holder_id": null
+},
+{
+"age_cat": "U15",
+"sex": "M",
+"weight_class": "+85 kg",
+"lift": "total",
+"value": 217,
+"standard": true,
+"holder": null,
+"holder_id": null
+}
+]

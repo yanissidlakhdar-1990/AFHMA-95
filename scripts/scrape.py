@@ -131,8 +131,76 @@ def parse_birthdate(html):
     return f"{y}-{mo}-{d}"
 
 
+def athlete_id(href):
+    """'/scoresheet/search/8172/10' -> '8172' (identifiant Fédé de l'athlète)."""
+    m = re.search(r"/search/(\d+)", href or "")
+    return m.group(1) if m else None
+
+
+def parse_france_records(html):
+    """Page /scoresheet/record/ : records de France en cours (SENIOR, U20, U17, U15).
+
+    Une section par catégorie d'âge, deux colonnes (Féminin / Masculin), puis une ligne par
+    catégorie de poids ; chaque mouvement contient « nom du détenteur | valeur »
+    (« standard » quand personne n'a encore battu le minimum fixé par la Fédé).
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    out = []
+    for inner in soup.find_all("table", id="competitionSet"):
+        col = inner.find_parent("td")
+        section = col.find_parent("table") if col else None
+        head = section.find("th") if section else None
+        age = head.get_text(strip=True).upper() if head else ""
+        label = col.find("span") if col else None
+        sex = {"féminin": "F", "masculin": "M"}.get(label.get_text(strip=True).lower() if label else "")
+        if age not in ("SENIOR", "U20", "U17", "U15") or not sex:
+            continue
+        if True:
+            for tr in inner.select("tbody > tr"):
+                tds = tr.find_all("td", recursive=False)
+                if len(tds) < 4:
+                    continue
+                wc_txt = tds[0].get_text(strip=True)
+                wc = f"+{wc_txt.lstrip('>+')} kg" if wc_txt.startswith((">", "+")) else f"{wc_txt} kg"
+                for lift, td in zip(("snatch", "cj", "total"), tds[1:4]):
+                    cells = td.find_all("td")
+                    if len(cells) < 2:
+                        continue
+                    who = cells[0].get_text(" ", strip=True)
+                    link = cells[0].find("a")
+                    out.append({
+                        "age_cat": "Senior" if age == "SENIOR" else age, "sex": sex, "weight_class": wc,
+                        "lift": lift, "value": num(cells[1].get_text()),
+                        "standard": who.lower() == "standard",
+                        "holder": None if who.lower() == "standard" else re.sub(r"\s+", " ", who),
+                        "holder_id": athlete_id(link.get("href")) if link else None,
+                    })
+    # la page imbrique ses tableaux : on dédoublonne
+    seen, uniq = set(), []
+    for r in out:
+        k = (r["age_cat"], r["sex"], r["weight_class"], r["lift"])
+        if k not in seen:
+            seen.add(k)
+            uniq.append(r)
+    return uniq
+
+
+def scrape_france_records():
+    try:
+        recs = parse_france_records(get(f"{BASE}/scoresheet/record/"))
+    except RuntimeError as e:  # pas bloquant : on garde le fichier précédent
+        print(f"  ! records de France : {e}", file=sys.stderr)
+        return
+    if len(recs) < 50:
+        print(f"  ! records de France : seulement {len(recs)} lignes lues, fichier non modifié", file=sys.stderr)
+        return
+    (RAW / "france_records.json").write_text(json.dumps(recs, ensure_ascii=False, indent=0), encoding="utf-8")
+    print(f"Records de France : {len(recs)} lignes")
+
+
 def main():
     RAW.mkdir(parents=True, exist_ok=True)
+    scrape_france_records()
     bd_path = RAW / "birthdates.json"
     birthdates = json.loads(bd_path.read_text(encoding="utf-8")) if bd_path.exists() else {}
 

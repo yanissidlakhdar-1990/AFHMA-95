@@ -25,4 +25,6 @@ Site en ligne : https://yanissidlakhdar-1990.github.io/AFHMA-95/
 - Ne pas commiter de fausses données de test dans `data/` ou `site/data/` (elles sont générées par l'action).
 - `site/data/` n'existe qu'après un passage du workflow : pour tester en local, lancer `python scripts/scrape.py && python scripts/build.py` (accès réseau à ffhaltero requis), puis `python -m http.server -d site`.
 - Le site ne doit pas être indexé (meta robots noindex + robots.txt) : il y a des mineurs.
-- Pas encore fait : badges Record IDF / Record de France (à récupérer sur /scoresheet/record/).
+- Records de France : `scrape.py` lit /scoresheet/record/ (records EN COURS seulement, SENIOR/U20/U17/U15, pas de date ; « standard » = minimum Fédé non battu) → `data/raw/france_records.json`.
+  Détenteur rattaché via l'identifiant Fédé du lien athlète (`/search/<id>/…`), pas par le nom. Masters comparés au record Senior, U13 sans record.
+- Records IDF : aucune source publique (ni Fédé ni ligue). Les « Record IDF » de l'ancien Excel n'étaient pas fiables (303 lignes, dont des totaux de 48 kg) : ne pas les reprendre.

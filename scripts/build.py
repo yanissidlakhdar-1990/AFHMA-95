@@ -1,6 +1,6 @@
 """Calcule tout ce que le site affiche à partir des données brutes.
 
-Entrée  : data/raw/results.json, data/raw/birthdates.json
+Entrée  : data/raw/results.json, data/raw/birthdates.json, data/raw/france_records.json (facultatif)
 Sortie  : site/data/results.json, site/data/athletes.json, site/data/records.json, site/data/meta.json
 
 Règles (reprises du fichier Excel « Records Val d'Oise ») :
@@ -180,6 +180,16 @@ def wc_sort_key(wc):
     return (wc.startswith("+"), float(wc.strip("+ kg")))
 
 
+FR_AGES = ("U15", "U17", "U20", "Senior")  # catégories d'âge des records de France
+
+
+def fr_age(age_cat):
+    """Catégorie des records de France correspondante (Masters → Senior ; U13 : pas de record)."""
+    if age_cat in FR_AGES:
+        return age_cat
+    return None if age_cat == "U13" else "Senior"
+
+
 def fr_date(iso):
     return f"{iso[8:10]}/{iso[5:7]}/{iso[0:4]}" if iso else ""
 
@@ -276,6 +286,34 @@ def main():
                         entry[lift] = current.get((period, sex, age, wc, lift))
                     records.append(entry)
 
+    # 2 bis. records de France (page Fédé, records en cours) : qui les détient chez nous
+    fr_path = RAW / "france_records.json"
+    france = json.loads(fr_path.read_text(encoding="utf-8")) if fr_path.exists() else []
+    fr_index = {(r["age_cat"], r["sex"], r["weight_class"], r["lift"]): r for r in france}
+    fed_ids = defaultdict(set)  # licence -> identifiants Fédé (tirés des liens « athlète »)
+    for r in results:
+        m = re.search(r"/search/(\d+)", r.get("athlete_url") or "")
+        if m:
+            fed_ids[r["licence"]].add(m.group(1))
+    lift_label = dict(LIFTS)
+    france_held = defaultdict(list)
+    for rec in france:
+        if rec["standard"] or not rec["holder_id"]:
+            continue
+        for lic, ids in fed_ids.items():
+            if rec["holder_id"] in ids:
+                france_held[lic].append({k: rec[k] for k in ("age_cat", "sex", "weight_class", "lift", "value")})
+    for row in rows:
+        row["france"] = []
+    rows_by_lic = defaultdict(list)
+    for row in rows:
+        rows_by_lic[row["licence"]].append(row)
+    for lic, held in france_held.items():
+        for rec in held:  # la compétition où le record a été établi : 1re fois à cette barre
+            hit = next((r for r in rows_by_lic[lic] if r[rec["lift"]] == rec["value"]), None)
+            if hit:
+                hit["france"].append(f"{rec['age_cat']} {rec['sex']} {rec['weight_class']} {lift_label[rec['lift']]}")
+
     # 3. fiches athlètes
     latest_season = max(r["season"] for r in rows)
     latest_period = period_of(latest_season)
@@ -301,6 +339,13 @@ def main():
             pbs[lift] = {"value": best[lift], "date": best["date"]} if best and best[lift] else None
 
         rec95 = {lift: current.get((latest_period, sex, cur_cat, cur_wc, lift)) for lift, _ in LIFTS}
+        fa = fr_age(cur_cat)
+        rec_fr = {}
+        for lift, _ in LIFTS:
+            fr = fr_index.get((fa, sex, cur_wc, lift)) if fa else None
+            rec_fr[lift] = {"value": fr["value"], "holder": fr["holder"], "standard": fr["standard"],
+                            "mine": lic in france_held and any(h["lift"] == lift and h["value"] == fr["value"] and h["weight_class"] == cur_wc for h in france_held[lic]),
+                            "age_cat": fa} if fr else None
 
         # séries
         levels = {}
@@ -338,6 +383,8 @@ def main():
             "best_iwf": max((r["iwf"] or 0 for r in rs), default=0) or None,
             "pb": pbs,
             "record95": rec95,
+            "record_fr": rec_fr,
+            "france_held": france_held.get(lic, []),
             "levels": levels,
             "level_history": level_history,
             "best_total_by_season": dict(sorted(by_season.items())),
@@ -349,7 +396,7 @@ def main():
     dump = lambda name, obj: (OUT / name).write_text(json.dumps(obj, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     dump("results.json", rows)
     dump("athletes.json", athletes)
-    dump("records.json", {"records": records, "history": history})
+    dump("records.json", {"records": records, "history": history, "france": france})
     dump("meta.json", {
         "updated_at": datetime.now(timezone.utc).isoformat(timespec="minutes"),
         "latest_result": max(r["date"] for r in rows if r["date"]),
