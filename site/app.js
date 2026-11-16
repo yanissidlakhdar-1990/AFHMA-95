@@ -197,6 +197,8 @@
       state.ref = b.dataset.ref;
       const y = scrollY; viewAthlete(lic); scrollTo(0, y);
     }));
+    const moreS = $app.querySelector("#more-series");
+    if (moreS) moreS.addEventListener("click", () => { state.showAllSeries = !state.showAllSeries; const y = scrollY; viewAthlete(lic); scrollTo(0, y); });
     const more = $app.querySelector("#more");
     if (more) more.addEventListener("click", () => { state.showAll = !state.showAll; viewAthlete(lic); });
     $app.querySelectorAll(".chart .ln").forEach((p) => p.style.setProperty("--len", Math.ceil(p.getTotalLength())));
@@ -248,7 +250,8 @@
     const pts = rows.filter((r) => r.total && r.date);
     CH = null;
     if (pts.length < 2) return `<p class="empty">Il faut au moins deux compétitions pour tracer la courbe.</p>`;
-    const W = 640, H = 280, L = 34, R = 12, T = 14, B = 28;
+    const narrow = innerWidth < 600;
+    const W = narrow ? 360 : 640, H = narrow ? 240 : 280, L = 34, R = 12, T = 18, B = 28;
     const t0 = Date.parse(pts[0].date), t1 = Date.parse(pts[pts.length - 1].date);
     const maxV = Math.max(...pts.map((r) => r.total)), minV = Math.min(...pts.map((r) => r.snatch || r.total));
     const lo = Math.max(0, Math.floor((minV * 0.85) / 10) * 10), hi = Math.ceil((maxV * 1.05) / 10) * 10;
@@ -324,26 +327,46 @@
         <span class="n"><span data-count="${v}">0</span> <small class="muted">kg</small></span></div>`).join("")}</div>`;
   }
 
+  // Séries : un niveau atteint valide aussi tous les niveaux en dessous.
+  // On liste la série de CHAQUE compétition, et on surligne celles où un nouveau niveau a été franchi.
   function levelsCard(a) {
-    const block = (scale, levels) => {
-      const gotKeys = levels.filter((l) => a.levels[`${scale}:${l.key}`]).map((l) => l.key);
-      const top = gotKeys[gotKeys.length - 1];
-      return `<div class="levels">${levels.map((l) => {
-        const got = a.levels[`${scale}:${l.key}`];
-        return `<div class="lvl ${got ? "got" : ""} ${l.key === top ? "peak" : ""}"><div class="code">${esc(l.codes.join(" · "))}</div><div class="name">${esc(l.label)}</div>
-          <div class="when">${got ? `${frDate(got.first)}<br><span class="muted small">${got.count} fois</span>` : "à venir"}</div></div>`;
-      }).join("")}</div>`;
-    };
-    const hasMasters = Object.keys(a.levels).some((k) => k.startsWith("masters:"));
-    const hist = a.level_history.slice().sort((x, y) => x.date.localeCompare(y.date));
+    const scales = { ffhm: D.meta.series_levels, masters: D.meta.masters_levels };
+    const codeMap = {};
+    Object.entries(scales).forEach(([sc, lv]) => lv.forEach((l, i) => l.codes.forEach((c) => { codeMap[c] = { sc, i, key: l.key }; })));
+    const rows = a.results.map((id) => D.results[id]).filter((r) => r.date).sort((x, y) => x.date.localeCompare(y.date) || x.id - y.id);
+    const best = { ffhm: -1, masters: -1 };
+    const reach = { ffhm: [], masters: [] }; // par niveau : 1re date atteinte (ou dépassée) + nb de fois
+    const lines = rows.map((r) => {
+      const m = codeMap[r.series];
+      let isNew = false;
+      if (m) {
+        for (let i = 0; i <= m.i; i++) {
+          const x = (reach[m.sc][i] ||= { first: r.date, count: 0, direct: false });
+          x.count++;
+          if (i === m.i) x.direct = true;
+        }
+        if (m.i > best[m.sc]) { isNew = true; best[m.sc] = m.i; }
+      }
+      return { r, m, isNew };
+    });
+    const block = (sc) => `<div class="levels">${scales[sc].map((l, i) => {
+      const x = reach[sc][i];
+      return `<div class="lvl ${x ? "got" : ""} ${i === best[sc] ? "peak" : ""}"><div class="code">${l.codes.map(esc).join("<br>")}</div><div class="name">${esc(l.label)}</div>
+        <div class="when">${x ? `${frDate(x.first)}<br><span class="muted small">${x.count} fois${x.direct ? "" : " (dépassé)"}</span>` : "à venir"}</div></div>`;
+    }).join("")}</div>`;
+    const n = state.showAllSeries ? lines.length : 10;
+    const shown = lines.slice().reverse().slice(0, n);
     return `<div class="card ${rv(9)}"><div class="card-h"><h2>Mes séries FFHM</h2><span class="muted small">en or : ton meilleur niveau</span></div>
-      ${block("ffhm", D.meta.series_levels)}
-      ${hasMasters ? `<div class="h3">Séries Masters</div>${block("masters", D.meta.masters_levels)}` : ""}
-      ${hist.length ? `<div class="h3">Chaque nouveau niveau atteint</div><div class="tbl-wrap"><table>
-        <thead><tr><th>Niveau</th><th>Date</th><th>Cat.</th><th class="num">Total</th><th>Compétition</th></tr></thead><tbody>
-        ${hist.map((h) => `<tr><td><span class="serie">${esc(h.level)}</span></td><td>${frDate(h.date)}</td><td>${esc(h.age_cat)}</td><td class="num tot"><b>${h.total}</b></td><td class="comp">${esc(h.competition)}</td></tr>`).join("")}
-      </tbody></table></div>` : ""}
-      <p class="note">La série est attribuée par la Fédé selon le total réalisé. En vert : niveaux déjà atteints, avec la date de la première fois.</p></div>`;
+      ${block("ffhm")}
+      ${best.masters >= 0 ? `<div class="h3">Séries Masters</div>${block("masters")}` : ""}
+      ${lines.length ? `<div class="h3">Ma série à chaque compétition</div><div class="tbl-wrap"><table class="series-tbl">
+        <thead><tr><th>Date</th><th>Série</th><th class="num">Total</th><th>Cat.</th><th>Compétition</th></tr></thead><tbody>
+        ${shown.map(({ r, m, isNew }) => `<tr class="${isNew ? "lvl-new" : ""}"><td class="num c-date" style="text-align:left">${frDate(r.date)}</td>
+          <td class="c-ser"><span class="serie ${m ? "" : "nc"}">${esc(r.series || "—")}</span>${isNew ? `<span class="newlvl">▲ Nouveau niveau</span>` : ""}</td>
+          <td class="num tot c-tot" data-l="Total"><b>${r.total || "—"}</b></td><td class="c-cat">${esc(r.age_cat)}</td><td class="comp c-comp">${esc(r.competition)}</td></tr>`).join("")}
+      </tbody></table></div>
+      ${lines.length > 10 ? `<button class="btn" id="more-series">${state.showAllSeries ? "Voir moins" : `Voir les ${lines.length} compétitions`}</button>` : ""}` : ""}
+      <p class="note">La série est attribuée par la Fédé selon le total réalisé. Un niveau atteint valide aussi ceux en dessous (« dépassé » = jamais obtenu pile, mais franchi par une série plus haute). Lignes surlignées : premières fois à un niveau plus haut. N.C. = non classé.</p></div>`;
   }
 
   function attempts(arr) {
@@ -352,19 +375,19 @@
   }
 
   function resultsTable(rows, n) {
-    return `<div class="tbl-wrap"><table>
+    return `<div class="tbl-wrap"><table class="res-tbl">
       <thead><tr><th>Date</th><th>Compétition</th><th>Cat.</th><th class="num">PC</th><th class="num">Arr.</th><th class="num">É-J</th><th class="num">Total</th><th>Série</th></tr></thead><tbody>
       ${rows.slice(0, n).map((r) => `<tr>
-        <td class="num" style="text-align:left">${frDate(r.date)}</td>
-        <td class="comp">${r.competition_url ? `<a href="${esc(r.competition_url)}" target="_blank" rel="noopener">${esc(r.competition)}</a>` : esc(r.competition)}
+        <td class="num c-date" style="text-align:left">${frDate(r.date)}</td>
+        <td class="comp c-comp">${r.competition_url ? `<a href="${esc(r.competition_url)}" target="_blank" rel="noopener">${esc(r.competition)}</a>` : esc(r.competition)}
           ${r.france && r.france.length ? `<br><span class="badge fr" title="${esc(r.france.join(" · "))}">🇫🇷 Record de France · ${esc(r.france[0])}${r.france.length > 1 ? ` +${r.france.length - 1}` : ""}</span>` : ""}
           ${r.records.length ? `<br><span class="badge" title="${esc(r.records.join(" · "))}">🏆 Record 95 · ${esc(r.records[0])}${r.records.length > 1 ? ` +${r.records.length - 1}` : ""}</span>` : ""}</td>
-        <td>${esc(r.age_cat)}<br><span class="muted small">${esc(r.weight_class || "")}</span></td>
-        <td class="num muted">${kg(r.bw)}</td>
-        <td class="num"><b>${r.snatch || "0"}</b>${attempts(r.snatch_attempts)}</td>
-        <td class="num"><b>${r.cj || "0"}</b>${attempts(r.cj_attempts)}</td>
-        <td class="num tot"><b>${r.total || "—"}</b></td>
-        <td>${r.series ? `<span class="serie">${esc(r.series)}</span>` : ""}</td></tr>`).join("")}
+        <td class="c-cat">${esc(r.age_cat)}<br><span class="muted small">${esc(r.weight_class || "")}</span></td>
+        <td class="num muted c-bw" data-l="Poids">${kg(r.bw)}</td>
+        <td class="num c-arr" data-l="Arr."><b>${r.snatch || "0"}</b>${attempts(r.snatch_attempts)}</td>
+        <td class="num c-ej" data-l="É-J"><b>${r.cj || "0"}</b>${attempts(r.cj_attempts)}</td>
+        <td class="num tot c-tot" data-l="Total"><b>${r.total || "—"}</b></td>
+        <td class="c-ser">${r.series ? `<span class="serie">${esc(r.series)}</span>` : ""}</td></tr>`).join("")}
     </tbody></table></div>`;
   }
 
@@ -444,7 +467,7 @@
   function route() {
     const h = location.hash.replace(/^#/, "") || "/";
     $tip.hidden = true;
-    if (!h.startsWith("/a/")) state.showAll = false;
+    if (!h.startsWith("/a/")) { state.showAll = false; state.showAllSeries = false; }
     if (h.startsWith("/a/")) viewAthlete(decodeURIComponent(h.slice(3)));
     else if (h === "/records") viewRecords();
     else if (h === "/derniers") viewLatest();
