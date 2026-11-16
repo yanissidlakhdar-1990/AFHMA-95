@@ -20,6 +20,11 @@ Site en ligne : https://yanissidlakhdar-1990.github.io/AFHMA-95/
   Catégorie de poids recalculée depuis le poids de corps avec le barème de la période (2020-25 / 2025-26 / 2026-27+). Total valide obligatoire.
 - Séries FFHM : ancien code · nouveau code = même niveau (REG·PRO, IRG·LIG, FED·HON, INT B·EUR, INT A·MON). DEB = débutant.
 
+## Identité
+- Nom affiché : « AFHMA Franconville — Tracker ». Logo vectoriel redessiné d'après le logo du club : `brand/` (SVG clair/sombre, PNG 1600 px, icône 512 px)
+  et `site/img/` (favicon + logos utilisés par le site). `brand/make_logo.py` régénère les SVG (texte converti en contours avec fontTools,
+  polices Big Shoulders Display + Archivo Italic à télécharger depuis google/fonts).
+
 ## Points d'attention
 - Le robot commite des données sur main chaque nuit : toujours `git pull` avant de modifier.
 - Ne pas commiter de fausses données de test dans `data/` ou `site/data/` (elles sont générées par l'action).

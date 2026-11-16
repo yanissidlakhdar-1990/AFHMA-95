@@ -512,3 +512,29 @@ tr:last-child td { border-bottom: none; }
 .stack .tl.best { fill: var(--gold); }
 .stack .sb { cursor: pointer; transition: opacity .2s; }
 .stack .sb.dim { opacity: .35; }
+
+/* ---------- identité AFHMA Franconville */
+.logo { display: none; }
+.logo-mark { width: 40px; height: 40px; border-radius: 11px; display: block; box-shadow: 0 4px 16px rgba(0, 0, 0, .35); transition: transform .3s var(--ease); }
+.brand:hover .logo-mark { transform: rotate(-6deg) scale(1.05); }
+.brand-txt b { color: var(--red2); margin-left: 4px; }
+.brand-tag { font-size: 10px; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase; padding: 4px 8px 3px; border-radius: 6px;
+  background: var(--red); color: #fff; line-height: 1; margin-left: -2px; }
+[data-theme="light"] .brand-txt b { color: #ff8a98; }
+.only-dark { display: none; } [data-theme="dark"] .only-dark { display: block; } [data-theme="dark"] .only-light { display: none; }
+.hero { position: relative; }
+.hero-logo { position: absolute; right: 0; top: 4px; width: clamp(96px, 26vw, 250px); pointer-events: none; }
+.hero-logo img { width: 100%; height: auto; filter: drop-shadow(0 18px 40px rgba(var(--red-rgb), .18)); }
+@media (max-width: 720px) {
+  .logo-mark { width: 34px; height: 34px; border-radius: 9px; }
+  .brand { gap: 8px; }
+  .brand-txt { font-size: 17px; }
+  .hero-logo { top: 0; width: 96px; }
+}
+@media (max-width: 380px) {
+  .brand-tag { display: none; }
+  .hero-logo { width: 80px; }
+}
+.hero > .eyebrow { padding-right: calc(clamp(96px, 26vw, 250px) + 12px); }
+@media (max-width: 720px) { .hero > .eyebrow { padding-right: 108px; } }
+@media (max-width: 380px) { .hero > .eyebrow { padding-right: 90px; } }

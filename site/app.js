@@ -100,7 +100,8 @@
 
     $app.innerHTML = `
       <section class="hero">
-        <div class="eyebrow ${rv(0)}">Saison ${esc(season)}</div>
+        <div class="hero-logo ${rv(1)}"><img class="only-light" src="img/logo-afhma.svg" alt="Logo AFHMA Franconville"><img class="only-dark" src="img/logo-afhma-dark.svg" alt="Logo AFHMA Franconville"></div>
+        <div class="eyebrow ${rv(0)}">AFHMA Franconville · Saison ${esc(season)}</div>
         <h1 class="${rv(1)}">Trouve<br><span class="out">ta</span> <span class="red">fiche.</span></h1>
         <p class="sub ${rv(2)}">Tes records, ta progression, tes séries et les records du 95 de ta catégorie.</p>
         <div class="stats ${rv(3)}">
