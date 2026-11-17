@@ -381,21 +381,31 @@
     });
     const block = (sc) => `<div class="levels">${scales[sc].map((l, i) => {
       const x = reach[sc][i];
-      return `<div class="lvl ${x ? "got" : ""} ${i === best[sc] ? "peak" : ""}"><div class="code">${l.codes.map(esc).join("<br>")}</div><div class="name">${esc(l.label)}</div>
-        <div class="when">${x ? frDate(x.first) : ""}</div></div>`;
+      return `<div class="lvl ${x ? "got" : ""}"><div class="code">${l.codes.map(esc).join("<br>")}</div><div class="name">${esc(l.label)}</div>
+        <div class="when">${x ? `${frDate(x.first)}<span class="times">${x.count} fois</span>` : "à venir"}</div></div>`;
     }).join("")}</div>`;
-    const n = state.showAllSeries ? lines.length : 10;
-    const shown = lines.slice().reverse().slice(0, n);
-    return `<div class="card ${rv(9)}"><div class="card-h"><h2>Mes séries FFHM</h2></div>
+    // Record perso = meilleur total jamais fait jusque-là
+    let pb = 0;
+    lines.forEach((l) => { l.pb = l.r.total > pb && pb > 0; if (l.r.total > pb) pb = l.r.total; });
+    const recCell = (r, l) => {
+      const out = [];
+      if (r.france && r.france.length) out.push(`<span class="badge fr" title="${esc(r.france.join(" · "))}">🇫🇷 France</span>`);
+      if (r.records && r.records.length) out.push(`<span class="badge" title="${esc(r.records.join(" · "))}">🏆 Record 95</span>`);
+      if (l.pb) out.push(`<span class="badge pb">Record perso</span>`);
+      return out.length ? out.join(" ") : `<span class="none">—</span>`;
+    };
+    const N = 5;
+    const shown = lines.slice().reverse().slice(0, state.showAllSeries ? lines.length : N);
+    return `<div class="card ${rv(9)}"><div class="card-h"><h2>Mes séries FFHM</h2><span class="muted small">1er passage · nombre de fois</span></div>
       ${block("ffhm")}
       ${best.masters >= 0 ? `<div class="h3">Séries Masters</div>${block("masters")}` : ""}
       ${lines.length ? `<div class="h3">Ma série à chaque compétition</div><div class="tbl-wrap"><table class="series-tbl">
-        <thead><tr><th>Date</th><th>Série</th><th class="num">Total</th><th>Cat.</th><th>Compétition</th></tr></thead><tbody>
-        ${shown.map(({ r, m, isNew }) => `<tr class="${isNew ? "lvl-new" : ""}"><td class="num c-date" style="text-align:left">${frDate(r.date)}</td>
-          <td class="c-ser"><span class="serie ${m ? "" : "nc"}">${esc(r.series || "—")}</span>${isNew ? `<span class="newlvl">▲ Nouveau niveau</span>` : ""}</td>
-          <td class="num tot c-tot" data-l="Total"><b>${r.total || "—"}</b></td><td class="c-cat">${esc(r.age_cat)}</td><td class="comp c-comp">${esc(r.competition)}</td></tr>`).join("")}
+        <thead><tr><th>Date</th><th>Série</th><th class="num">Total</th><th>Record</th><th>Compétition</th></tr></thead><tbody>
+        ${shown.map((l) => { const { r, m, isNew } = l; return `<tr class="${isNew ? "lvl-new" : ""}"><td class="num c-date" style="text-align:left">${frDate(r.date)}</td>
+          <td class="c-ser"><span class="serie ${m ? "" : "nc"}">${esc(r.series || "—")}</span>${isNew ? `<span class="newlvl">▲ Nouveau niveau acquis</span>` : ""}</td>
+          <td class="num tot c-tot" data-l="Total"><b>${r.total || "—"}</b></td><td class="c-rec">${recCell(r, l)}</td><td class="comp c-comp">${esc(r.competition)}</td></tr>`; }).join("")}
       </tbody></table></div>
-      ${lines.length > 10 ? `<button class="btn" id="more-series">${state.showAllSeries ? "Voir moins" : `Voir les ${lines.length} compétitions`}</button>` : ""}` : ""}</div>`;
+      ${lines.length > N ? `<button class="more-btn ${state.showAllSeries ? "open" : ""}" id="more-series" aria-expanded="${state.showAllSeries}"><span>${state.showAllSeries ? "Masquer mes autres compétitions" : `Accéder à mes autres compétitions (${lines.length - N})`}</span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>` : ""}` : ""}</div>`;
   }
 
   function attempts(arr) {
