@@ -68,7 +68,38 @@
     requestAnimationFrame(() => requestAnimationFrame(run));
   }
 
-  // ---------- accueil
+  // ---------- accueil (porte d'entrée : logo + rubriques)
+  function viewWelcome() {
+    setNav("welcome");
+    const hist = D.records.history;
+    const last = hist.slice().sort((a, b) => b.date.localeCompare(a.date))[0];
+    const nRec = D.records.records.filter((r) => r.period === D.meta.latest_period).length;
+    const ico = {
+      stats: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+      records: '<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/>',
+      derniers: '<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/>',
+    };
+    const svg = (k) => `<svg viewBox="0 0 24 24">${ico[k]}</svg>`;
+    $app.innerHTML = `
+      <section class="welcome">
+        <div class="w-logo ${rv(0)}"><img class="lg-light" src="img/logo-afhma.svg" alt="AFHMA Franconville"><img class="lg-dark" src="img/logo-afhma-dark.svg" alt="AFHMA Franconville"></div>
+        <p class="w-tag ${rv(1)}">Stats des athlètes du 95</p>
+      </section>
+      <a class="w-main ${rv(2)}" href="#/stats">
+        <span class="w-ico">${svg("stats")}</span>
+        <span class="w-txt"><b>Mes stats</b><span>Trouve ta fiche : tes records, ta progression et tes séries.</span></span>
+        <span class="w-go">Trouver ma fiche <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <div class="w-grid">
+        <a class="w-tile ${rv(3)}" href="#/records"><span class="w-ico">${svg("records")}</span>
+          <span class="w-txt"><b>Records du 95</b><span>${nRec} records en cours, par catégorie</span></span><span class="w-arrow">→</span></a>
+        <a class="w-tile ${rv(4)}" href="#/derniers"><span class="w-ico">${svg("derniers")}</span>
+          <span class="w-txt"><b>Derniers records</b><span>${last ? `Le dernier : ${esc(last.athlete)}, ${longDate(last.date)}` : "Les records battus récemment"}</span></span><span class="w-arrow">→</span></a>
+      </div>`;
+    animate();
+  }
+
+  // ---------- mes stats : trouve ta fiche
   function viewHome(soft) {
     setNav("home");
     const clubs = D.meta.clubs;
@@ -125,7 +156,7 @@
   function viewAthlete(lic) {
     setNav("home");
     const a = D.byLic[lic];
-    if (!a) { $app.innerHTML = `<p class="pad center">Athlète introuvable. <a href="#/">Retour</a></p>`; return; }
+    if (!a) { $app.innerHTML = `<p class="pad center">Athlète introuvable. <a href="#/stats">Retour</a></p>`; return; }
     const rows = a.results.map((id) => D.results[id]).reverse();
     const catTxt = `${a.age_cat} ${a.sex} ${a.weight_class || ""}`.trim();
     const { last, first } = splitName(a.name);
@@ -153,7 +184,7 @@
 
     const seasons = Object.values(a.best_total_by_season);
     $app.innerHTML = `
-      <a href="#/" class="back ${rv(0)}">← Tous les athlètes</a>
+      <a href="#/stats" class="back ${rv(0)}">← Trouve ta fiche</a>
       <section class="ahero">
         <h1 class="${rv(1)}">${esc(first)} ${esc(last)}</h1>
         <p class="aline ${rv(2)}">${sexLabel(a.sex)} · Catégorie <b>${esc(catTxt)}</b>${a.last_bw ? ` (poids de corps ${kg(a.last_bw)} kg)` : ""} · ${esc(clubShort(a.club))} · ${a.n_competitions} compétition${a.n_competitions > 1 ? "s" : ""} · dernière le ${frDate(a.last_date)}</p>
@@ -508,7 +539,8 @@
     if (h.startsWith("/a/")) viewAthlete(decodeURIComponent(h.slice(3)));
     else if (h === "/records") viewRecords();
     else if (h === "/derniers") viewLatest();
-    else viewHome();
+    else if (h === "/stats") viewHome();
+    else viewWelcome();
     window.scrollTo(0, 0);
   }
 
