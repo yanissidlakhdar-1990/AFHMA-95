@@ -182,6 +182,15 @@
           <div class="when">${pb ? `le ${longDate(pb.date)}` : "pas encore de barre validée"}</div>${foot}</div>${side}</div>`;
     }).join("");
 
+    // 4e tuile : compétitions (nombre, depuis quand, meilleur IWF)
+    const dated = rows.filter((r) => r.date).map((r) => r.date).sort();
+    const bestIwf = rows.reduce((m, r) => (r.iwf > (m ? m.iwf : 0) ? r : m), null);
+    const nC = a.n_competitions || rows.length;
+    const compTile = `<div class="lift comps ${rv(7)}" style="--lc:var(--comp)">
+      <div class="body"><div class="lbl">Compétitions</div>
+        <div class="val"><span data-count="${nC}">0</span></div>
+        <div class="when">${dated.length ? `depuis ${dated[0].slice(5, 7)}/${dated[0].slice(0, 4)}` : ""}</div>
+        ${bestIwf ? `<div class="rec">Meilleur IWF : <b>${Math.round(bestIwf.iwf)}</b> · le ${frDate(bestIwf.date)}</div>` : ""}</div></div>`;
     const seasons = Object.values(a.best_total_by_season);
     $app.innerHTML = `
       <a href="#/stats" class="back ${rv(0)}">← Trouve ta fiche</a>
@@ -190,7 +199,7 @@
         <p class="aline ${rv(2)}">${sexLabel(a.sex)} · Catégorie <b>${esc(catTxt)}</b>${a.last_bw ? ` (poids de corps ${kg(a.last_bw)} kg)` : ""} · ${esc(clubShort(a.club))} · ${a.n_competitions} compétition${a.n_competitions > 1 ? "s" : ""} · dernière le ${frDate(a.last_date)}</p>
         ${a.france_held && a.france_held.length ? `<div class="meta ${rv(3)}">${frHeld(a)}</div>` : ""}
       </section>
-      <div class="lifts">${lifts}</div>
+      <div class="lifts">${lifts}${compTile}</div>
       ${refCard(a)}
       <div class="grid2 ${rv(8)}">
         <div class="card chart draw"><div class="card-h"><h2>Ma progression</h2>
