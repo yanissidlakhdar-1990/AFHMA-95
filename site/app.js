@@ -187,10 +187,12 @@
     const bestIwf = rows.reduce((m, r) => (r.iwf > (m ? m.iwf : 0) ? r : m), null);
     const nC = a.n_competitions || rows.length;
     const compTile = `<div class="lift comps ${rv(7)}" style="--lc:var(--comp)">
-      <div class="body"><div class="lbl">Compétitions</div>
-        <div class="val"><span data-count="${nC}">0</span></div>
-        <div class="when">${dated.length ? `depuis ${dated[0].slice(5, 7)}/${dated[0].slice(0, 4)}` : ""}</div>
-        ${bestIwf ? `<div class="rec">Meilleur IWF : <b>${Math.round(bestIwf.iwf)}</b> · le ${frDate(bestIwf.date)}</div>` : ""}</div></div>`;
+      <div class="body"><div class="duo">
+        <div><div class="lbl">Compétitions</div><div class="val"><span data-count="${nC}">0</span></div>
+          <div class="when">${dated.length ? `depuis ${dated[0].slice(5, 7)}/${dated[0].slice(0, 4)}` : ""}</div></div>
+        ${bestIwf ? `<div class="iwf"><div class="lbl">Meilleur IWF</div><div class="val"><span data-count="${Math.round(bestIwf.iwf)}">0</span><small>pts</small></div>
+          <div class="when">le ${frDate(bestIwf.date)}</div></div>` : ""}
+      </div></div></div>`;
     const seasons = Object.values(a.best_total_by_season);
     $app.innerHTML = `
       <a href="#/stats" class="back ${rv(0)}">← Trouve ta fiche</a>
