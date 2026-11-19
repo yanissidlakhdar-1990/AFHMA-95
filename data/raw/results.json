@@ -49762,5 +49762,179 @@
 "category": "SEN F 69",
 "sex": "F",
 "iwf": 205.67
+},
+{
+"season": "2026/2027",
+"date": "2026-11-18",
+"competition": "IDF - Challenge Avenir - Franconville - U10-U13",
+"competition_url": "https://scoresheet.ffhaltero.fr/scoresheet/competition/view/14544",
+"licence": "509887",
+"athlete": "LALET Lysana",
+"athlete_url": "https://scoresheet.ffhaltero.fr/scoresheet/search/15376/10",
+"club": "AFHMA FRANCONVILLE",
+"nat": "FR",
+"bw": 53,
+"snatch_attempts": [
+12,
+14,
+16
+],
+"snatch": 30,
+"cj_attempts": [
+15,
+17,
+18
+],
+"cj": 35,
+"total": 65,
+"series": "N.C.",
+"category": "U13 F 53",
+"sex": "F",
+"iwf": 95.78
+},
+{
+"season": "2026/2027",
+"date": "2026-11-18",
+"competition": "IDF - Challenge Avenir - Franconville - U10-U13",
+"competition_url": "https://scoresheet.ffhaltero.fr/scoresheet/competition/view/14544",
+"licence": "509817",
+"athlete": "MARQUES ALVES Gonçalo",
+"athlete_url": "https://scoresheet.ffhaltero.fr/scoresheet/search/15368/10",
+"club": "AFHMA FRANCONVILLE",
+"nat": "FR",
+"bw": 65,
+"snatch_attempts": [
+21,
+23,
+25
+],
+"snatch": 48,
+"cj_attempts": [
+25,
+27,
+28
+],
+"cj": 55,
+"total": 103,
+"series": "N.C.",
+"category": "U13 M 65",
+"sex": "M",
+"iwf": 149.7
+},
+{
+"season": "2026/2027",
+"date": "2026-11-18",
+"competition": "IDF - Challenge Avenir - Franconville - U10-U13",
+"competition_url": "https://scoresheet.ffhaltero.fr/scoresheet/competition/view/14544",
+"licence": "519441",
+"athlete": "MARQUES ALVES Rodrigo",
+"athlete_url": "https://scoresheet.ffhaltero.fr/scoresheet/search/17278/10",
+"club": "AFHMA FRANCONVILLE",
+"nat": "FR",
+"bw": 39.3,
+"snatch_attempts": [
+10,
+12,
+13
+],
+"snatch": 25,
+"cj_attempts": [
+13,
+15,
+17
+],
+"cj": 32,
+"total": 57,
+"series": "N.C.",
+"category": "U10 M",
+"sex": "M",
+"iwf": 126.62
+},
+{
+"season": "2026/2027",
+"date": "2026-11-18",
+"competition": "IDF - Challenge Avenir - Franconville - U10-U13",
+"competition_url": "https://scoresheet.ffhaltero.fr/scoresheet/competition/view/14544",
+"licence": "523497",
+"athlete": "PRIVEY Lucas",
+"athlete_url": "https://scoresheet.ffhaltero.fr/scoresheet/search/17280/10",
+"club": "AFHMA FRANCONVILLE",
+"nat": "FR",
+"bw": 41.2,
+"snatch_attempts": [
+11,
+12,
+13
+],
+"snatch": 25,
+"cj_attempts": [
+12,
+14,
+15
+],
+"cj": 29,
+"total": 54,
+"series": "N.C.",
+"category": "U13 M 43",
+"sex": "M",
+"iwf": 114.5
+},
+{
+"season": "2026/2027",
+"date": "2026-11-18",
+"competition": "IDF - Challenge Avenir - Franconville - U10-U13",
+"competition_url": "https://scoresheet.ffhaltero.fr/scoresheet/competition/view/14544",
+"licence": "521282",
+"athlete": "PRIVEY Paul",
+"athlete_url": "https://scoresheet.ffhaltero.fr/scoresheet/search/17279/10",
+"club": "AFHMA FRANCONVILLE",
+"nat": "FR",
+"bw": 28.8,
+"snatch_attempts": [
+11,
+12,
+13
+],
+"snatch": 25,
+"cj_attempts": [
+12,
+13,
+14
+],
+"cj": 27,
+"total": 52,
+"series": "N.C.",
+"category": "U10 M",
+"sex": "M",
+"iwf": 162.53
+},
+{
+"season": "2026/2027",
+"date": "2026-11-18",
+"competition": "IDF - Challenge Avenir - Franconville - U10-U13",
+"competition_url": "https://scoresheet.ffhaltero.fr/scoresheet/competition/view/14544",
+"licence": "519607",
+"athlete": "VLADESCU Ianis radu",
+"athlete_url": "https://scoresheet.ffhaltero.fr/scoresheet/search/17277/10",
+"club": "AFHMA FRANCONVILLE",
+"nat": "FR",
+"bw": 36.9,
+"snatch_attempts": [
+11,
+12,
+13
+],
+"snatch": 25,
+"cj_attempts": [
+10,
+12,
+14
+],
+"cj": 26,
+"total": 51,
+"series": "N.C.",
+"category": "U10 M",
+"sex": "M",
+"iwf": 120.82
 }
 ]
